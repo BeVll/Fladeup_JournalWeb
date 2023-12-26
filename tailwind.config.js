@@ -12,7 +12,7 @@ export default {
   darkMode: "class",
   plugins: [
       nextui({
-    prefix: "fladeup", // prefix for themes variables
+    prefix: "nextui", // prefix for themes variables
     addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
  // default theme to extend on custom themes
         layout: {
@@ -47,12 +47,16 @@ export default {
         layout: {}, // light theme layout tokens
         colors: {
           primary: "#26A17F",
+
         }, // light theme colors
       },
       dark: {
         layout: {}, // dark theme layout tokens
         colors: {
           primary: "#26A17F",
+          focus: "#26A17F",
+
+
         }, // dark theme colors
       },
       // ... custom themes

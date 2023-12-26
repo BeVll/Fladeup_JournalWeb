@@ -1,4 +1,4 @@
-import {Button, Image, Link, Tooltip} from "@nextui-org/react";
+import {Button, Image, Link, Tooltip, useDisclosure} from "@nextui-org/react";
 import logo from '../assets/logo.png';
 import {
     Calendar2Event,
@@ -10,11 +10,14 @@ import {
     People, Power
 } from "react-bootstrap-icons";
 import {useTheme} from "next-themes";
+import {useNavigate} from "react-router-dom";
 export const Sidebar = () => {
     const { theme, setTheme } = useTheme();
+    const navigate = useNavigate();
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     return (
-        <div className="h-screen fixed items-center flex-col flex justify-between border-default-200 p-4 w-[100px] border-r dark:border-default-100 bg-default-200/10">
+        <div className="h-screen hidden md:flex fixed items-center flex-col flex justify-between border-default-200 p-4 w-[100px] border-r dark:border-default-100 bg-default-200/20">
             <div>
                 <Image src={logo} width={50}/>
             </div>
@@ -37,6 +40,7 @@ export const Sidebar = () => {
                     color={"default"}
                     placement="right"
                     size={"lg"}
+
                     content={
                         "Students & Teachers"
                     }
@@ -50,11 +54,15 @@ export const Sidebar = () => {
                     color={"default"}
                     placement="right"
                     size={"lg"}
+                    onSelect={() => {
+                        console.log("dsada");
+                    }}
+
                     content={
                         "Subjects"
                     }
                 >
-                    <Button className={"w-[20px]"}>
+                    <Button className={"w-[20px]"} onClick={() => {navigate("/subjects")}}>
                         <Collection/>
                     </Button>
                 </Tooltip>

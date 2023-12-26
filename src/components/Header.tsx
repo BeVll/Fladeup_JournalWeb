@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AuthUserActionType, IAuthUser} from "../lib/store/types.ts";
 import {formHttp, http} from "../http.ts";
 import {useNavigate} from "react-router-dom";
+import {ThemeSwitch} from "./ThemeSwitch.tsx";
 
 export const Header = ({pageTitle}:{pageTitle:string}) => {
     const { user, isAuth } = useSelector((store: any) => store.auth as IAuthUser);
@@ -30,11 +31,12 @@ export const Header = ({pageTitle}:{pageTitle:string}) => {
     }
 
     return (
-        <div className="flex justify-between items-center z-0">
+        <div className="flex justify-between items-center z-0 p-4 md:p-0">
             <div className="">
                 <h1 className="font-bold text-2xl">{pageTitle}</h1>
             </div>
             <div className="flex-row flex items-center gap-4">
+                <ThemeSwitch/>
                 <Input
                     classNames={{
                         base: "max-w-full sm:max-w-[10rem] h-10",

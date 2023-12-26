@@ -15,6 +15,10 @@ import {ThemeProvider as NextThemesProvider, useTheme} from "next-themes";
 import {formHttp, http} from "./http.ts";
 import {store} from "./lib/store/store.ts";
 import {jwtDecode} from "jwt-decode";
+import {Subjects} from "./features/subjects";
+import {SubjectsPage} from "./pages/SubjectsPage.tsx";
+import {ListSubjects} from "./features/subjects/components/ListSubjects.tsx";
+import {CreateSubject} from "./features/subjects/components/CreateSubject.tsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -48,7 +52,7 @@ function App() {
       <>
           {
 
-              theme == "dark" ?
+
                   <div className="-z-20">
                       <div aria-hidden="true"
                            className="fixed light:hidden light:opacity-0 dark:md:block dark:opacity-70 -top-[80%] -right-[60%] 2xl:-top-[60%] 2xl:-right-[45%] -z-20 rotate-12">
@@ -65,12 +69,11 @@ function App() {
 
                       </div>
                   </div>
-                  :
-                  <></>
+
           }
 
 
-          <main className={theme + " z-20"}>
+          {/*<main className={theme + " z-20"}>*/}
 
               <BrowserRouter>
                   {
@@ -78,6 +81,9 @@ function App() {
                           <Routes>
                               <Route path="/" element={<Layout/>}>
                                   <Route index element={<Home/>}/>
+                                  <Route path="subjects" element={<SubjectsPage/>}>
+                                      <Route index element={<ListSubjects/>}/>
+                                  </Route>
                                   {/*<Route path="blogs" element={<Blogs />} />*/}
                                   {/*<Route path="contact" element={<Contact />} />*/}
                                   {/*<Route path="*" element={<NoPage />} />*/}
@@ -93,7 +99,7 @@ function App() {
 
 
               </BrowserRouter>
-          </main>
+          {/*</main>*/}
       </>
 
 
