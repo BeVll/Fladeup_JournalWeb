@@ -4,19 +4,31 @@ import {AuthUserActionType, ILoginResult, IUser} from "../../../lib/store/types.
 import {jwtDecode} from "jwt-decode";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
+import {ISubjectCreate, ISubjectModel, PagedResponse} from "../types/subjects.ts";
 
 const SubjectApi = {
-    getAllSubjects: async function () {
+    getAllSubjects: async function (page: number, pageSize: number) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
 
-        const response = await http.get<ISubjectModel[]>("/Subject/all");
+        const response = await http.get<PagedResponse<ISubjectModel[]>>("/Subject?page="+page+"&pageSize="+pageSize);
         return response;
     },
     createSubject: async function (values: ISubjectCreate) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
 
-        const response = await formHttp.post<ISubjectModel>("/Subject/create", values);
+        const response  = await formHttp.post<ISubjectModel>("/Subject/create", values);
+        return response;
+    },
+    editSubject: async function (values: ISubjectModel) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+
+        const response  = await formHttp.put<ISubjectModel>("/Subject/update", values);
+        return response;
+    },
+    deleteSubject: async function (id: number) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+
+        const response = await http.delete<ISubjectModel>("/Subject/delete/"+id);
         return response;
     },
     // loginUser: async function (userData: ILoginUser) {

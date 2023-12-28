@@ -35,6 +35,7 @@ export const CreateModal = ({ isOpen, onOpenChange, onCreated }: {isOpen: boolea
             SubjectApi.createSubject(values).then(res => {
 
                 onCreated();
+                onOpenChange(true);
             })
         },
     });
@@ -109,7 +110,7 @@ export const CreateModal = ({ isOpen, onOpenChange, onCreated }: {isOpen: boolea
                                 <Button color="danger" variant="flat" onPress={onClose}>
                                     Close
                                 </Button>
-                                <Button color="primary" type={"submit"} onPress={onClose}>
+                                <Button color="primary" type={"submit"}>
                                     Create
                                 </Button>
                             </ModalFooter>

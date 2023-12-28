@@ -14,11 +14,11 @@ import {JSXElementConstructor, ReactComponentElement, ReactElement, useCallback,
 import {IColumn} from "../lib/types/customTableTypes.ts";
 import {CustomTableHeader} from "./CustomTableHeader.tsx";
 
-export const CustomTable = ({ tableBody, columns, pages, topContent }:{
+export const CustomTable = ({ tableBody, columns, topContent, bottomContent}:{
     tableBody: ReactElement<TableBodyProps<object>, string | JSXElementConstructor<any>>,
     columns: IColumn[],
-    pages: number,
-    topContent: React.ReactNode
+    topContent: React.ReactNode,
+    bottomContent: React.ReactNode
 }) => {
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
     const [sortDescriptor, setSortDescriptor] = useState({
@@ -26,37 +26,18 @@ export const CustomTable = ({ tableBody, columns, pages, topContent }:{
         direction: "ascending",
     });
     const [page, setPage] = useState(1);
-    const bottomContent = useMemo(() => {
-        // @ts-ignore
-        return (
-            <div className="py-2 px-2 flex justify-between items-center">
-                <Pagination
-                    showControls
-                    classNames={{
-                        cursor: "bg-foreground text-background",
-                    }}
-                    color="default"
 
-                    page={page}
-                    total={pages}
-                    variant="light"
-                    onChange={setPage}
-                />
-                <span className="text-small text-default-400">
 
-        </span>
-            </div>
-        );
-    }, [selectedKeys, page, pages]);
+
+
 
     return (
         <Table
             aria-label="Example table with custom cells, pagination and sorting"
             isHeaderSticky={true}
-
             bottomContentPlacement="outside"
             classNames={{
-                wrapper: "max-h-[1500px] bg-transparent p-0 border-0 shadow-none",
+                wrapper: "md:max-h-[1000px] bg-transparent p-0 border-0 shadow-none",
             }}
 
             selectedKeys={selectedKeys}

@@ -17,7 +17,7 @@ import {useTheme} from "next-themes";
 import {useNavigate} from "react-router-dom";
 import {Circle, Sketch} from "@uiw/react-color";
 
-export const CustomTableHeader = ({ columns, onCreateClick }:{ columns: any[], onCreateClick: (e: PressEvent) => void }) => {
+export const CustomTableHeader = ({ columns, onCreateClick, onPageSizeChange }:{ columns: any[], onCreateClick: (e: PressEvent) => void, onPageSizeChange: (pageSize: number) => void})=> {
     const [filterValue, setFilterValue] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [page, setPage] = useState(1);
@@ -99,7 +99,7 @@ export const CustomTableHeader = ({ columns, onCreateClick }:{ columns: any[], o
                     Rows per page:
                     <select
                         className="bg-transparent outline-none text-default-400 text-small"
-
+                        onChange={(e) => {onPageSizeChange(Number(e.target.value))}}
                     >
                         <option value="5">5</option>
                         <option value="10">10</option>

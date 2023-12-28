@@ -17,15 +17,23 @@ import {AuthUserActionType, IUser} from "../../../lib/store/types.ts";
 import {useDispatch} from "react-redux";
 import SubjectApi from "../api/SubjectApi.ts";
 import {Circle, Colorful} from "@uiw/react-color";
-import {useState} from "react";
-import {ISubjectCreate} from "../types/subjects.ts";
+import {useEffect, useState} from "react";
+import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
 import * as Yup from 'yup';
 
-export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onCreated:Function}) => {
+export const EditSubject = ({ isOpen, onOpenChange, onEdited, subject }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onEdited:Function, subject: ISubjectModel}) => {
 
     const [hex, setHex] = useState("#fff");
 
+    useEffect(() => {
+        formik.setFieldValue("id", subject.id);
+        formik.setFieldValue("name", subject.name);
+        formik.setFieldValue("color", subject.color);
+    }, [subject]);
+
     const SignupSchema = Yup.object().shape({
+        id: Yup.number()
+            .required('Required'),
         name: Yup.string()
             .min(2, 'Too Short!')
             .max(50, 'Too Long!')
@@ -36,18 +44,19 @@ export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: bool
             .required('Required'),
     });
 
-    const initialValues: ISubjectCreate = {
-        name: '',
-        color: ''
+    const initialValues: ISubjectModel = {
+        id: subject.id,
+        name: subject.name,
+        color: subject.color
     }
 
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: SignupSchema,
         onSubmit: values => {
-            SubjectApi.createSubject(values).then(res => {
-                formik.resetForm();
-                onCreated();
+            SubjectApi.editSubject(values).then(res => {
+
+                onEdited();
                 onOpenChange(false);
             })
         },
@@ -81,7 +90,7 @@ export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: bool
 
                                 <Colorful
                                     disableAlpha={true}
-                                    className="w-full py-2"
+                                    className="w-full"
                                     style={{width: "100%"}}
                                     color={formik.values.color}
                                     defaultValue={1}
@@ -97,7 +106,7 @@ export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: bool
                                     Close
                                 </Button>
                                 <Button color="primary" type={"submit"} >
-                                    Create
+                                    Edit
                                 </Button>
                             </ModalFooter>
                         </>

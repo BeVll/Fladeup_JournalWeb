@@ -11,14 +11,14 @@ import {
     Modal,
     ModalBody,
     ModalContent, ModalFooter,
-    ModalHeader,
+    ModalHeader, Pagination, Spinner,
     TableBody,
     TableCell,
     TableRow, useDisclosure
 } from "@nextui-org/react";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {CustomTable} from "../../../components/CustomTable.tsx";
-import {ISubjectModel} from "../types/subjects.ts";
+import {ISubjectModel, PagedResponse} from "../types/subjects.ts";
 import SubjectApi from "../api/SubjectApi.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ChatDots, ThreeDots, ThreeDotsVertical} from "react-bootstrap-icons";
@@ -28,21 +28,33 @@ import {get} from "axios";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
+import {DeleteSubject} from "./DeleteSubject.tsx";
+import {EditSubject} from "./EditSubject.tsx";
 
 export const ListSubjects = () => {
-    const [subjects, setSubjects] = useState<ISubjectModel[]>([])
+    const [subjects, setSubjects] = useState<PagedResponse<ISubjectModel[]>>()
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
+    const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+    const [deleteSubject, setDeleteSubject] = useState<ISubjectModel>();
+    const [editSubject, setEditSubject] = useState<ISubjectModel>();
+    const [isLoading, setLoading] = useState<boolean>(true);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
 
     useEffect(() => {
         getSubjects();
-    }, []);
+    }, [page, pageSize]);
 
     const getSubjects = () => {
-        SubjectApi.getAllSubjects().then(res => {
+        setLoading(true);
+        SubjectApi.getAllSubjects(page, pageSize).then(res => {
             setSubjects(res.data);
             console.log(res.data);
-        })
+            setLoading(false);
+        });
+
     }
 
     const columns: IColumn[] = [
@@ -58,7 +70,38 @@ export const ListSubjects = () => {
     //     );
     // }
 
+    const bottomContent = useMemo(() => {
+        // @ts-ignore
 
+        if(subjects){
+            return (
+                <div className="py-2 px-2 flex justify-between items-center">
+                    <Pagination
+                        isCompact
+                        showControls
+                        showShadow
+                        color="primary"
+                        page={subjects?.pageNumber}
+                        total={subjects?.totalPages}
+                        onChange={setPage}
+                    />
+                    <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                        <Button isDisabled={subjects?.totalPages === 1} size="sm" variant="flat" onPress={() => {setPage(page-1); getSubjects();}}>
+                            Previous
+                        </Button>
+                        <Button isDisabled={subjects?.totalPages === 1} size="sm" variant="flat" onPress={() => {setPage(page+1); getSubjects();}}>
+                            Next
+                        </Button>
+                    </div>
+                </div>
+            );
+        }
+        else
+            return (
+                <></>
+            );
+
+    }, [subjects?.pageNumber, subjects?.totalPages]);
 
     return (
         subjects ?
@@ -66,12 +109,15 @@ export const ListSubjects = () => {
 
 
                 <CreateSubject isOpen={isOpen} onCreated={getSubjects} onOpenChange={onOpenChange}/>
+                {deleteSubject && <DeleteSubject subject={deleteSubject} onDeleted={getSubjects} onOpenChange={setOpenDelete} isOpen={isOpenDelete}/>}
+                {editSubject && <EditSubject subject={editSubject} onEdited={getSubjects} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
                 <CustomTable
                     columns={columns}
-                    topContent={<CustomTableHeader onCreateClick={() => {onOpenChange()}} columns={columns}/>}
+                    topContent={<CustomTableHeader onPageSizeChange={setPageSize} onCreateClick={() => {onOpenChange()}} columns={columns}/>}
 
+                    bottomContent={bottomContent}
                     tableBody={
-                    <TableBody emptyContent={"No users found"} items={subjects}>
+                    <TableBody emptyContent={"No subjects found"} loadingContent={<Spinner/>} isLoading={isLoading} items={subjects.data}>
                         {(item) => (
                             <TableRow key={item.id}>
                                 <TableCell>
@@ -108,6 +154,10 @@ export const ListSubjects = () => {
                                                     key="edit"
                                                     shortcut="⌘⇧E"
                                                     startContent={<EditDocumentIcon className={iconClasses} />}
+                                                    onPress={() => {
+                                                        setEditSubject(item);
+                                                        setOpenEdit(true);
+                                                    }}
                                                 >
                                                     Edit
                                                 </DropdownItem>
@@ -116,6 +166,10 @@ export const ListSubjects = () => {
                                                     className="text-danger"
                                                     color="danger"
                                                     shortcut="⌘⇧D"
+                                                    onPress={() => {
+                                                        setDeleteSubject(item);
+                                                        setOpenDelete(true);
+                                                    }}
                                                     startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
                                                 >
                                                     Delete
@@ -127,7 +181,8 @@ export const ListSubjects = () => {
                             </TableRow>
                         )}
                     </TableBody>
-                } />
+                }
+                />
             </>
             :
             <></>
