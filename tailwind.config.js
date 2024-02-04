@@ -47,7 +47,7 @@ export default {
         layout: {}, // light theme layout tokens
         colors: {
           primary: "#26A17F",
-
+          background: "#F6F6F6"
         }, // light theme colors
       },
       dark: {

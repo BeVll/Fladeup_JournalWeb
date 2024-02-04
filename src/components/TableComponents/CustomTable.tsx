@@ -11,7 +11,7 @@ import {
     User
 } from "@nextui-org/react";
 import {JSXElementConstructor, ReactComponentElement, ReactElement, useCallback, useMemo, useState} from "react";
-import {IColumn} from "../lib/types/customTableTypes.ts";
+import {IColumn} from "../../lib/types/customTableTypes.ts";
 import {CustomTableHeader} from "./CustomTableHeader.tsx";
 
 export const CustomTable = ({ tableBody, columns, topContent, bottomContent}:{

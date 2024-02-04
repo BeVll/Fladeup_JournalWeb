@@ -1,74 +1,35 @@
-import {ILoginRequest} from "../types/types.ts";
+
 import {formHttp, http} from "../../../http.ts";
-import {AuthUserActionType, ILoginResult, IUser} from "../../../lib/store/types.ts";
-import {jwtDecode} from "jwt-decode";
-import {useDispatch} from "react-redux";
-import {useNavigate} from "react-router-dom";
-import {ISubjectCreate, ISubjectModel, PagedResponse} from "../types/subjects.ts";
+import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
+import {PagedResponse} from "../../../lib/types/types.ts";
 
 const SubjectApi = {
-    getAllSubjects: async function (page: number, pageSize: number) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+    getAllSubjects: async function (page: number, pageSize: number, filterValue: string) {
+        let url = "";
+        if(filterValue != undefined && filterValue != "")
+            url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue;
+        else
+            url = "/Subject?page="+page+"&pageSize="+pageSize;
 
-        const response = await http.get<PagedResponse<ISubjectModel[]>>("/Subject?page="+page+"&pageSize="+pageSize);
+        const response = await http.get<PagedResponse<ISubjectModel[]>>(url);
         return response;
     },
-    createSubject: async function (values: ISubjectCreate) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
 
+    createSubject: async function (values: ISubjectCreate) {
         const response  = await formHttp.post<ISubjectModel>("/Subject/create", values);
         return response;
     },
-    editSubject: async function (values: ISubjectModel) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
 
+    editSubject: async function (values: ISubjectModel) {
         const response  = await formHttp.put<ISubjectModel>("/Subject/update", values);
         return response;
     },
-    deleteSubject: async function (id: number) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
 
+    deleteSubject: async function (id: number) {
         const response = await http.delete<ISubjectModel>("/Subject/delete/"+id);
         return response;
     },
-    // loginUser: async function (userData: ILoginUser) {
-    //     try {
-    //         const response = await formHttp.post("/auth/login", userData);
-    //         return response;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
-    // getUserProfile: async function () {
-    //     try {
-    //
-    //         const response = await http.get<IUserEdit>("/user/userProfile");
-    //         console.log(response);
-    //         return response;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
-    // getUserClasses: async function () {
-    //     try {
-    //
-    //         const response = await http.get<IClassItem[]>("/user/getClasses");
-    //         console.log(response);
-    //         return response;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
-    // getUserSchedule: async function (userId: number, date: Date) {
-    //     try {
-    //
-    //         const response = await http.get<IEventItem[]>(`/event/forUserByDate?userId=${userId}&date=${date.toDateString()}`);
-    //         console.log(response);
-    //         return response;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
+
 }
 
 export default SubjectApi;

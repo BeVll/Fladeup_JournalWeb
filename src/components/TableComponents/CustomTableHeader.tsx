@@ -1,24 +1,33 @@
 import {
-    Button, Checkbox,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    Input, Link,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter, ModalHeader, useDisclosure
+    Button,
+    Input,
 } from "@nextui-org/react";
-import {Lock, Plus, Search} from "react-bootstrap-icons";
-import {ChevronDownIcon} from "../features/subjects/assets/icons/ChevronDownIcon.tsx";
+import {Plus, Search} from "react-bootstrap-icons";
 import {useCallback, useEffect, useState} from "react";
 import {useTheme} from "next-themes";
 import {useNavigate} from "react-router-dom";
-import {Circle, Sketch} from "@uiw/react-color";
 
-export const CustomTableHeader = ({ columns, onCreateClick, onPageSizeChange }:{ columns: any[], onCreateClick: (e: PressEvent) => void, onPageSizeChange: (pageSize: number) => void})=> {
-    const [filterValue, setFilterValue] = useState("");
+export const CustomTableHeader = (
+        {
+            onCreateClick,
+            onPageSizeChange,
+            totalRecords,
+            filterValue,
+            setFilterValue,
+            searchLabel,
+            totalLabel
+        }
+        :
+        {
+            onCreateClick: (e: PressEvent) => void,
+            onPageSizeChange: (pageSize: number) => void,
+            totalRecords: number,
+            filterValue: string,
+            setFilterValue:  React.Dispatch<React.SetStateAction<string>>,
+            searchLabel: string,
+            totalLabel: string
+        })=> {
+
     const [statusFilter, setStatusFilter] = useState("all");
     const [page, setPage] = useState(1);
     const { theme, setTheme } = useTheme();
@@ -57,44 +66,22 @@ export const CustomTableHeader = ({ columns, onCreateClick, onPageSizeChange }:{
                         base: "w-full sm:max-w-[44%]",
                         inputWrapper: "border-1",
                     }}
-                    placeholder="Search by name..."
+                    placeholder={searchLabel}
                     size="sm"
                     startContent={<Search className="text-default-300" />}
                     value={filterValue}
                     variant="bordered"
-                    onClear={() => setFilterValue("")}
+                    onClear={onClear}
                     onValueChange={onSearchChange}
                 />
                 <div className="flex gap-3">
-                    {/*<Dropdown>*/}
-                    {/*    <DropdownTrigger className="hidden sm:flex">*/}
-                    {/*        <Button endContent={<ChevronDownIcon className="text-small"/>} variant="flat">*/}
-                    {/*            Status*/}
-                    {/*        </Button>*/}
-                    {/*    </DropdownTrigger>*/}
-                    {/*    <DropdownMenu*/}
-                    {/*        disallowEmptySelection*/}
-                    {/*        aria-label="Table Columns"*/}
-                    {/*        closeOnSelect={false}*/}
-                    {/*        selectedKeys={statusFilter}*/}
-                    {/*        selectionMode="multiple"*/}
-
-                    {/*    >*/}
-                    {/*        {statusOptions.map((status) => (*/}
-                    {/*            <DropdownItem key={status.uid} className="">*/}
-
-                    {/*            </DropdownItem>*/}
-                    {/*        ))}*/}
-                    {/*    </DropdownMenu>*/}
-                    {/*</Dropdown>*/}
-
                     <Button color="primary" onPress={onCreateClick} endContent={<Plus/>}>
                         Add New
                     </Button>
                 </div>
             </div>
             <div className="flex justify-between items-center">
-                <span className="text-default-400 text-small">Total users</span>
+                <span className="text-default-400 text-small">{totalLabel} {totalRecords}</span>
                 <label className="flex items-center text-default-400 text-small">
                     Rows per page:
                     <select

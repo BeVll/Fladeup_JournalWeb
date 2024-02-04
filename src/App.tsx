@@ -19,6 +19,8 @@ import {Subjects} from "./features/subjects";
 import {SubjectsPage} from "./pages/SubjectsPage.tsx";
 import {ListSubjects} from "./features/subjects/components/ListSubjects.tsx";
 import {CreateSubject} from "./features/subjects/components/CreateSubject.tsx";
+import {GroupsPage} from "./pages/GroupsPage.tsx";
+import {ListGroups} from "./features/classes/components/ListGroups.tsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -51,9 +53,9 @@ function App() {
 
       <>
           {
+              theme == "dark" &&
 
-
-                  <div className="-z-20">
+                  <div className="-z-20 light:hidden">
                       <div aria-hidden="true"
                            className="fixed light:hidden light:opacity-0 dark:md:block dark:opacity-70 -top-[80%] -right-[60%] 2xl:-top-[60%] 2xl:-right-[45%] -z-20 rotate-12">
                           <img src={bg}
@@ -84,6 +86,9 @@ function App() {
                                   <Route path="subjects" element={<SubjectsPage/>}>
                                       <Route index element={<ListSubjects/>}/>
                                   </Route>
+                                  <Route path="groups" element={<GroupsPage/>}>
+                                      <Route index element={<ListGroups/>}/>
+                                  </Route>
                                   {/*<Route path="blogs" element={<Blogs />} />*/}
                                   {/*<Route path="contact" element={<Contact />} />*/}
                                   {/*<Route path="*" element={<NoPage />} />*/}
@@ -99,7 +104,6 @@ function App() {
 
 
               </BrowserRouter>
-          {/*</main>*/}
       </>
 
 

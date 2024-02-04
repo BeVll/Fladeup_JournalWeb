@@ -12,74 +12,105 @@ import {
 } from "@nextui-org/react";
 import {useEffect, useMemo, useState} from "react";
 import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
-import {ISubjectModel} from "../types/subjects.ts";
-import SubjectApi from "../api/SubjectApi.ts";
+import {IGroupModel} from "../types/groups.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
 import {CustomTableHeader} from "../../../components/TableComponents/CustomTableHeader.tsx";
-import {CreateSubject} from "./CreateSubject.tsx";
+import {CreateGroup} from "./CreateGroup.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
-import {DeleteSubject} from "./DeleteSubject.tsx";
-import {EditSubject} from "./EditSubject.tsx";
+import {EditGroup} from "./EditGroup.tsx";
 import {CustomPagination} from "../../../components/TableComponents/CustomPagination.tsx";
+import GroupApi from "../api/GroupApi.ts";
+import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
-export const ListSubjects = () => {
-    const [subjects, setSubjects] = useState<PagedResponse<ISubjectModel[]>>()
+export const ListGroups = () => {
+    const [groups, setGroups] = useState<PagedResponse<IGroupModel[]>>()
     const {isOpen, onOpenChange} = useDisclosure();
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
-    const [deleteSubject, setDeleteSubject] = useState<ISubjectModel>();
-    const [editSubject, setEditSubject] = useState<ISubjectModel>();
+    const [deleteItem, setDeleteItem] = useState<IGroupModel>();
+    const [editGroup, setEditGroup] = useState<IGroupModel>();
     const [isLoading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [filterValue, setFilterValue] = useState("");
 
     useEffect(() => {
-        getSubjects();
+        getItems();
     }, [page, pageSize, filterValue]);
 
-    const getSubjects = () => {
+    const getItems = () => {
         setLoading(true);
-        SubjectApi.getAllSubjects(page, pageSize, filterValue).then(res => {
-            setSubjects(res.data);
+        GroupApi.getAllGroups(page, pageSize, filterValue).then(res => {
+            setGroups(res.data);
             console.log(res.data);
             setLoading(false);
         });
 
     }
 
+    const checkYears = (start: number, end: number) : boolean => {
+        let dt = new Date();
+        if(dt.getFullYear() == start || dt.getFullYear() == end)
+            return true;
+        else
+            return false;
+
+    }
+
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
         {name: "NAME", uid: "name", sortable: true},
-        {name: "COLOR", uid: "color", sortable: false},
+        {name: "YEARS", uid: "years", sortable: false},
         {name: "ACTIONS", uid: "actions", sortable: false},
     ];
 
+    const onDeleteItem = () => {
+        if(deleteItem){
+            GroupApi.deleteGroup(deleteItem?.id).then(res => {
+                console.log(res.data);
+                setOpenDelete(false);
+            })
+        }
+
+    }
+
     const bottomContent = useMemo(() => {
-        if(subjects){
+        if(groups){
             return (
-                <CustomPagination pageNumber={subjects.pageNumber} totalPages={subjects.totalPages} setPage={setPage} page={page}/>
+                <CustomPagination pageNumber={groups.pageNumber} totalPages={groups.totalPages} setPage={setPage} page={page}/>
             );
         }
             return (
                 <></>
             );
 
-    }, [subjects?.pageNumber, subjects?.totalPages]);
+    }, [groups?.pageNumber, groups?.totalPages]);
 
-    // @ts-ignore
     return (
-        subjects ?
+        groups ?
             <>
 
-                <CreateSubject isOpen={isOpen} onCreated={getSubjects} onOpenChange={onOpenChange}/>
-                {deleteSubject && <DeleteSubject subject={deleteSubject} onDeleted={getSubjects} onOpenChange={setOpenDelete} isOpen={isOpenDelete}/>}
-                {editSubject && <EditSubject subject={editSubject} onEdited={getSubjects} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
+                <CreateGroup
+                    isOpen={isOpen}
+                    onCreated={getItems}
+                    onOpenChange={onOpenChange}
+                />
+
+                {deleteItem &&
+                    <DeleteModal
+                        title={"Delete group"}
+                        text={"Do you want to delete group?"}
+                        onDeletePress={onDeleteItem}
+                        onOpenChange={setOpenDelete}
+                        isOpen={isOpenDelete}
+                    />
+                }
+                {editGroup && <EditGroup item={editGroup} onEdited={getItems} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
 
                 <CustomTable
                     columns={columns}
@@ -87,18 +118,18 @@ export const ListSubjects = () => {
                     <CustomTableHeader
                         onPageSizeChange={setPageSize}
                         onCreateClick={() => {onOpenChange()}}
-                        totalRecords={subjects.totalRecords}
+                        totalRecords={groups.totalRecords}
                         filterValue={filterValue}
                         setFilterValue={setFilterValue}
-                        searchLabel={"Search by id, name, color..."}
-                        totalLabel={"Total subjects:"}
+                        searchLabel={"Search by id, name, years..."}
+                        totalLabel={"Total groups:"}
                     />
                      }
 
                     bottomContent={bottomContent}
                     tableBody={
-                    <TableBody emptyContent={"No subjects found"} loadingContent={<Spinner/>} isLoading={isLoading} items={subjects.data}>
-                        {(item) => (
+                    <TableBody emptyContent={"No subjects found"} loadingContent={<Spinner/>} isLoading={isLoading} items={groups.data}>
+                        {(item: IGroupModel) => (
                             <TableRow key={item.id}>
                                 <TableCell>
                                     {item.id}
@@ -107,8 +138,8 @@ export const ListSubjects = () => {
                                     {item.name}
                                 </TableCell>
                                 <TableCell>
-                                    <Chip className="text-content1 font-black" style={{background: item.color}} size="sm" variant="flat">
-                                        {item.color}
+                                    <Chip className="font-black" color={checkYears(item.yearOfStart, item.yearOfEnd) ? "primary" : "danger"} size="sm" variant="flat">
+                                        {item.yearOfStart}/{item.yearOfEnd}
                                     </Chip>
                                 </TableCell>
                                 <TableCell>
@@ -135,7 +166,7 @@ export const ListSubjects = () => {
                                                     shortcut="⌘⇧E"
                                                     startContent={<EditDocumentIcon className={iconClasses} />}
                                                     onPress={() => {
-                                                        setEditSubject(item);
+                                                        setEditGroup(item);
                                                         setOpenEdit(true);
                                                     }}
                                                 >
@@ -147,7 +178,7 @@ export const ListSubjects = () => {
                                                     color="danger"
                                                     shortcut="⌘⇧D"
                                                     onPress={() => {
-                                                        setDeleteSubject(item);
+                                                        setDeleteItem(item);
                                                         setOpenDelete(true);
                                                     }}
                                                     startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
