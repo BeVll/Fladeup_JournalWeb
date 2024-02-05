@@ -18,11 +18,11 @@ import {useDispatch} from "react-redux";
 import SubjectApi from "../api/GroupApi.ts";
 import {Circle, Colorful} from "@uiw/react-color";
 import {useEffect, useState} from "react";
-import {IGroupCreate, IGroupModel, ISubjectModel} from "../types/groups.ts";
+import {IGroupCreate, IGroupModel, IGroupUpdate, ISubjectModel} from "../types/groups.ts";
 import * as Yup from 'yup';
 import GroupApi from "../api/GroupApi.ts";
 
-export const EditGroup = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onEdited:Function, item: IGroupModel}) => {
+export const EditGroup = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onEdited:Function, item: IGroupUpdate}) => {
 
     const [hex, setHex] = useState("#fff");
 
@@ -39,13 +39,10 @@ export const EditGroup = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: boo
             .min(2, 'Too Short!')
             .max(50, 'Too Long!')
             .required('Required'),
-        color: Yup.string()
-            .min(3, 'Too Short!')
-            .max(7, 'Too Long!')
-            .required('Required'),
     });
 
-    const initialValues: IGroupCreate = {
+    const initialValues: IGroupUpdate = {
+        id: item.id,
         name: item.name,
         shortName: item.shortName,
         formOfStudy: item.formOfStudy,
@@ -58,7 +55,6 @@ export const EditGroup = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: boo
         validationSchema: SignupSchema,
         onSubmit: values => {
             GroupApi.editGroup(values).then(res => {
-
                 onEdited();
                 onOpenChange(false);
             })

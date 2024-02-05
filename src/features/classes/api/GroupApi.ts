@@ -1,6 +1,6 @@
 
 import {formHttp, http} from "../../../http.ts";
-import {IGroupCreate, IGroupModel, ISubjectCreate, ISubjectModel} from "../types/groups.ts";
+import {IGroupCreate, IGroupModel, IGroupUpdate, ISubjectCreate, ISubjectModel} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 const GroupApi = {
@@ -20,8 +20,8 @@ const GroupApi = {
         return response;
     },
 
-    editGroup: async function (values: ISubjectModel) {
-        const response  = await formHttp.put<ISubjectModel>("/Subject/update", values);
+    editGroup: async function (values: IGroupUpdate) {
+        const response  = await formHttp.put<IGroupModel>("Class", values);
         return response;
     },
 

@@ -74,6 +74,7 @@ export const ListGroups = () => {
             GroupApi.deleteGroup(deleteItem?.id).then(res => {
                 console.log(res.data);
                 setOpenDelete(false);
+                getItems();
             })
         }
 

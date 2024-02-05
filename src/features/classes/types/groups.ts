@@ -18,3 +18,12 @@ export interface IGroupCreate{
     yearOfStart: number,
     yearOfEnd: number
 }
+
+export interface IGroupUpdate{
+    id: number,
+    name: string,
+    shortName: string,
+    formOfStudy: string,
+    yearOfStart: number,
+    yearOfEnd: number
+}
