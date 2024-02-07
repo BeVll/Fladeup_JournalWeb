@@ -42,10 +42,10 @@ export const Sidebar = () => {
                     size={"lg"}
 
                     content={
-                        "Students & Teachers"
+                        "Students"
                     }
                 >
-                    <Button className={"w-[20px]"}>
+                    <Button className={"w-[20px]"} onClick={() => {navigate("/students")}}>
                         <People/>
                     </Button>
                 </Tooltip>

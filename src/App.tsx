@@ -1,6 +1,5 @@
 
 import './App.css'
-import {NextUIProvider} from "@nextui-org/react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {AuthUserActionType, IAuthUser, IUser} from "./lib/store/types.ts";
@@ -21,6 +20,8 @@ import {ListSubjects} from "./features/subjects/components/ListSubjects.tsx";
 import {CreateSubject} from "./features/subjects/components/CreateSubject.tsx";
 import {GroupsPage} from "./pages/GroupsPage.tsx";
 import {ListGroups} from "./features/classes/components/ListGroups.tsx";
+import {StudentsPage} from "./pages/StudentsPage.tsx";
+import {ListStudents} from "./features/students/components/ListStudents.tsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -88,6 +89,9 @@ function App() {
                                   </Route>
                                   <Route path="groups" element={<GroupsPage/>}>
                                       <Route index element={<ListGroups/>}/>
+                                  </Route>
+                                  <Route path="students" element={<StudentsPage/>}>
+                                      <Route index element={<ListStudents/>}/>
                                   </Route>
                                   {/*<Route path="blogs" element={<Blogs />} />*/}
                                   {/*<Route path="contact" element={<Contact />} />*/}

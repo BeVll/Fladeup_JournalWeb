@@ -36,8 +36,9 @@ export const CustomTable = ({ tableBody, columns, topContent, bottomContent}:{
             aria-label="Example table with custom cells, pagination and sorting"
             isHeaderSticky={true}
             bottomContentPlacement="outside"
+
             classNames={{
-                wrapper: "md:max-h-[1000px] bg-transparent p-0 border-0 shadow-none",
+                wrapper: "md:max-h-[1000px] bg-transparent p-0 border-0 shadow-none ",
             }}
 
             selectedKeys={selectedKeys}
