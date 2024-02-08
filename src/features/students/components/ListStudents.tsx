@@ -4,7 +4,7 @@ import {
     Dropdown,
     DropdownItem,
     DropdownMenu,
-    DropdownTrigger, Image,
+    DropdownTrigger, Image, Link,
     Spinner,
     TableBody,
     TableCell,
@@ -107,7 +107,7 @@ export const ListStudents = () => {
 
     // @ts-ignore
     return (
-        groups || !isLoading ?
+        groups && !isLoading ?
             <>
 
                 <CreateGroup
@@ -165,8 +165,10 @@ export const ListStudents = () => {
                                                 :
                                                 <MdPhotoCamera className="text-default-300" size={40}/>
                                         }
+                                        <Link href={"students/view/"+item.id} color={"foreground"} underline={"hover"}>
+                                            {item.firstname} {item.lastname}
+                                        </Link>
 
-                                        <span>{item.firstname} {item.lastname}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell>
