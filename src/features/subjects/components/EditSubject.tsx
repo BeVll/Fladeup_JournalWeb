@@ -1,35 +1,27 @@
 import {
     Button,
-    Checkbox,
     Input,
-    Link,
     Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
-    ModalHeader, useDisclosure
+    ModalHeader
 } from "@nextui-org/react";
 import {useFormik} from "formik";
-import AuthApi from "../../auth/api/AuthApi.ts";
-import {formHttp, http} from "../../../http.ts";
-import {jwtDecode} from "jwt-decode";
-import {AuthUserActionType, IUser} from "../../../lib/store/types.ts";
-import {useDispatch} from "react-redux";
 import SubjectApi from "../api/SubjectApi.ts";
-import {Circle, Colorful} from "@uiw/react-color";
-import {useEffect, useState} from "react";
-import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
+import {Colorful} from "@uiw/react-color";
+import {useEffect} from "react";
 import * as Yup from 'yup';
+import {ISubjectModel} from "../types/subjects.ts";
 
-export const EditSubject = ({ isOpen, onOpenChange, onEdited, subject }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onEdited:Function, subject: ISubjectModel}) => {
+export const EditSubject = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onEdited:() => void, item: ISubjectModel}) => {
 
-    const [hex, setHex] = useState("#fff");
 
     useEffect(() => {
-        formik.setFieldValue("id", subject.id);
-        formik.setFieldValue("name", subject.name);
-        formik.setFieldValue("color", subject.color);
-    }, [subject]);
+        formik.setFieldValue("id", item.id);
+        formik.setFieldValue("name", item.name);
+        formik.setFieldValue("color", item.color);
+    }, [item]);
 
     const SignupSchema = Yup.object().shape({
         id: Yup.number()
@@ -45,17 +37,17 @@ export const EditSubject = ({ isOpen, onOpenChange, onEdited, subject }: {isOpen
     });
 
     const initialValues: ISubjectModel = {
-        id: subject.id,
-        name: subject.name,
-        color: subject.color
+        id: item.id,
+        name: item.name,
+        color: item.color
     }
 
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: SignupSchema,
         onSubmit: values => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             SubjectApi.editSubject(values).then(res => {
-
                 onEdited();
                 onOpenChange(false);
             })

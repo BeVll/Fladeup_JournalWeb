@@ -12,18 +12,18 @@ import {Circle} from "@uiw/react-color";
 import {ISubjectModel} from "../types/subjects.ts";
 import SubjectApi from "../api/SubjectApi.ts";
 
-export const DeleteSubject = ({onOpenChange, isOpen, subject, onDeleted}:{subject: ISubjectModel, onOpenChange: any, isOpen: boolean, onDeleted:Function}) => {
+export const DeleteSubject = ({onOpenChange, isOpen, item, onDeleted}:{item: ISubjectModel, onOpenChange: any, isOpen: boolean, onDeleted:Function}) => {
 
 
     const deleteSubject = () => {
-        SubjectApi.deleteSubject(subject?.id).then(res => {
+        SubjectApi.deleteSubject(item?.id).then(res => {
             onOpenChange(false);
             onDeleted();
         })
     }
 
     return (
-        subject ?
+        item ?
         <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
@@ -37,7 +37,7 @@ export const DeleteSubject = ({onOpenChange, isOpen, subject, onDeleted}:{subjec
                             <ModalBody>
 
                                 <p>
-                                    Do you want to delete [{subject.id}-{subject.name}] subject?
+                                    Do you want to delete [{item.id}-{item.name}] subject?
                                 </p>
 
                             </ModalBody>

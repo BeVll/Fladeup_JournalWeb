@@ -2,12 +2,13 @@
 import {formHttp, http} from "../../../http.ts";
 import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
+import {Key} from "react";
 
 const SubjectApi = {
-    getAllSubjects: async function (page: number, pageSize: number, filterValue: string, sortBy: string, sortDirection: string) {
+    getAllSubjects: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
-            url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
+            url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy?.toString() + "&sortDirection="+sortDirection;
         else
             url = "/Subject?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 

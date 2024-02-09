@@ -10,48 +10,46 @@ import {
     TableCell,
     TableRow, useDisclosure
 } from "@nextui-org/react";
-import {useEffect, useMemo, useState} from "react";
+import {createRef, Key, useRef, useState} from "react";
 import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
 import {ISubjectModel} from "../types/subjects.ts";
 import SubjectApi from "../api/SubjectApi.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
-import {CustomTableHeader} from "../../../components/TableComponents/CustomTableHeader.tsx";
 import {CreateSubject} from "./CreateSubject.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
 import {DeleteSubject} from "./DeleteSubject.tsx";
 import {EditSubject} from "./EditSubject.tsx";
-import {CustomPagination} from "../../../components/TableComponents/CustomPagination.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 export const ListSubjects = () => {
-    const [items, setItems] = useState<PagedResponse<ISubjectModel[]>>()
-    const {isOpen, onOpenChange} = useDisclosure();
+    const [items, setItems] = useState<PagedResponse<ISubjectModel[]>>(
+        {
+            pageNumber: 1,
+            pageSize: 0,
+            totalPages: 1,
+            totalRecords: 0,
+            data: [],
+            succeeded: false,
+            errors: null,
+            message: "fd"
+        }
+    )
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
-    const [deleteSubject, setDeleteSubject] = useState<ISubjectModel>();
-    const [editSubject, setEditSubject] = useState<ISubjectModel>();
-    const [isLoading, setLoading] = useState<boolean>(true);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [filterValue, setFilterValue] = useState("");
-
-    const [sortDescriptor, setSortDescriptor] = useState({
-        column: "id",
-        direction: "ascending",
-    });
-
-    useEffect(() => {
-        getSubjects();
-    }, [page, pageSize, filterValue, sortDescriptor]);
-
-    const getSubjects = () => {
+    const [deleteItem, setDeleteItem] = useState<ISubjectModel>();
+    const [editItem, setEditItem] = useState<ISubjectModel>();
+    const {isOpen, onOpenChange} = useDisclosure();
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const childRef = createRef();
+    const [isRefresh, setRefresh] = useState<boolean>(false);
+    const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
 
-        SubjectApi.getAllSubjects(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(async res => {
+        SubjectApi.getAllSubjects(page, pageSize, filterValue, column, direction).then(async res => {
             setItems(res.data);
             console.log(res.data);
             setLoading(false);
@@ -66,60 +64,24 @@ export const ListSubjects = () => {
         {name: "ACTIONS", uid: "actions", sortable: false},
     ];
 
-    const sortedItems = useMemo(() => {
-        console.log(sortDescriptor);
-        if(items){
-            return [...items.data].sort((a, b) => {
-                const first = a[sortDescriptor.column];
-                const second = b[sortDescriptor.column];
-                const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-                return sortDescriptor.direction === "descending" ? -cmp : cmp;
-            });
-        }
-        return items;
-    }, [sortDescriptor, items]);
-
-    const bottomContent = useMemo(() => {
-        if(items){
-            return (
-                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
-            );
-        }
-            return (
-                <></>
-            );
-
-    }, [items?.pageNumber, items?.totalPages]);
-
-    // @ts-ignore
     return (
-        items ?
-            <>
 
-                <CreateSubject isOpen={isOpen} onCreated={getSubjects} onOpenChange={onOpenChange}/>
-                {deleteSubject && <DeleteSubject subject={deleteSubject} onDeleted={getSubjects} onOpenChange={setOpenDelete} isOpen={isOpenDelete}/>}
-                {editSubject && <EditSubject subject={editSubject} onEdited={getSubjects} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
+            <>
+                <CreateSubject isOpen={isOpen} onCreated={() => {setRefresh(true)}} onOpenChange={onOpenChange}/>
+                {deleteItem && <DeleteSubject item={deleteItem} onDeleted={() => {setRefresh(true)}} onOpenChange={setOpenDelete} isOpen={isOpenDelete}/>}
+                {editItem && <EditSubject item={editItem} onEdited={() => {setRefresh(true)}} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
 
                 <CustomTable
                     columns={columns}
-                    sortDescriptor={sortDescriptor}
-                    onSortChange={setSortDescriptor}
-                    topContent={
-                    <CustomTableHeader
-                        onPageSizeChange={setPageSize}
-                        onCreateClick={() => {onOpenChange()}}
-                        totalRecords={items.totalRecords}
-                        filterValue={filterValue}
-                        setFilterValue={setFilterValue}
-                        searchLabel={"Search by id, name, color..."}
-                        totalLabel={"Total subjects:"}
-                    />
-                     }
-
-                    bottomContent={bottomContent}
+                    totalLabel={"Total subjects: "}
+                    searchLabel={"Search by name, color"}
+                    getItems={getItems}
+                    items={items}
+                    refresh={isRefresh}
+                    onRefresh={setRefresh}
+                    onOpenChange={onOpenChange}
                     tableBody={
-                    <TableBody emptyContent={!isLoading ? "No subjects found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : sortedItems}>
+                    items ? <TableBody emptyContent={!isLoading ? "No subjects found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
                         {(item) => (
                             <TableRow key={item.id}>
                                 <TableCell>
@@ -157,7 +119,7 @@ export const ListSubjects = () => {
                                                     shortcut="⌘⇧E"
                                                     startContent={<EditDocumentIcon className={iconClasses} />}
                                                     onPress={() => {
-                                                        setEditSubject(item);
+                                                        setEditItem(item);
                                                         setOpenEdit(true);
                                                     }}
                                                 >
@@ -169,7 +131,7 @@ export const ListSubjects = () => {
                                                     color="danger"
                                                     shortcut="⌘⇧D"
                                                     onPress={() => {
-                                                        setDeleteSubject(item);
+                                                        setDeleteItem(item);
                                                         setOpenDelete(true);
                                                     }}
                                                     startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
@@ -183,13 +145,11 @@ export const ListSubjects = () => {
                             </TableRow>
                         )}
                     </TableBody>
+                        :
+                        <></>
                 }
                 />
             </>
-            :
-            <div className="min-h-[300px] flex items-center justify-center">
-                <Spinner size={"lg"}/>
-            </div>
 
 
     );

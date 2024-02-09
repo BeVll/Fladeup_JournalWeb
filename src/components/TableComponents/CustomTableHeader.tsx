@@ -28,10 +28,8 @@ export const CustomTableHeader = (
             totalLabel: string
         })=> {
 
-    const [statusFilter, setStatusFilter] = useState("all");
     const [page, setPage] = useState(1);
     const { theme, setTheme } = useTheme();
-    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -42,7 +40,7 @@ export const CustomTableHeader = (
         // setVisibleColumns(listColumns);
     }, []);
 
-    const onSearchChange = useCallback((value:any) => {
+    const onSearchChange = useCallback((value:string) => {
         if (value) {
             setFilterValue(value);
             setPage(1);

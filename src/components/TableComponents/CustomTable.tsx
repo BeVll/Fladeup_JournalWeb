@@ -1,29 +1,84 @@
 import {
-    Button,
-    Chip, Dropdown, DropdownItem, DropdownMenu,
-    DropdownTrigger, Pagination,
+    SortDescriptor,
     Table,
-    TableBody, TableBodyProps,
-    TableCell,
+    TableBodyProps,
     TableColumn,
     TableHeader,
-    TableRow,
-    User
 } from "@nextui-org/react";
-import {JSXElementConstructor, ReactComponentElement, ReactElement, useCallback, useMemo, useState} from "react";
+import {
+    JSXElementConstructor, Key,
+    ReactElement,
+    useEffect, useImperativeHandle, useMemo,
+    useState
+} from "react";
 import {IColumn} from "../../lib/types/customTableTypes.ts";
 import {CustomTableHeader} from "./CustomTableHeader.tsx";
+import {CustomPagination} from "./CustomPagination.tsx";
+import {PagedResponse} from "../../lib/types/types.ts";
 
-export const CustomTable = ({ tableBody, columns, topContent, bottomContent, sortDescriptor, onSortChange}:{
+export const CustomTable = ({ tableBody, columns, searchLabel, totalLabel, getItems, onOpenChange, items, onRefresh, refresh}:{
     tableBody: ReactElement<TableBodyProps<object>, string | JSXElementConstructor<any>>,
     columns: IColumn[],
-    topContent: React.ReactNode,
-    bottomContent: React.ReactNode,
-    sortDescriptor:any,
-    onSortChange:  React.Dispatch<React.SetStateAction<{column: string, direction: string}>>
+    searchLabel: string,
+    totalLabel: string,
+    getItems: (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => void,
+    onOpenChange: () => void,
+    items: PagedResponse<never>,
+    onRefresh:  React.Dispatch<React.SetStateAction<boolean>>,
+    refresh: boolean
 }) => {
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
+    const [filterValue, setFilterValue] = useState("");
+
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+        column: "id",
+        direction: "ascending",
+    });
+
+
+
+    useEffect(() => {
+        if(refresh){
+            getItems(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction);
+            onRefresh(false);
+        }
+
+    }, [refresh]);
+
+    useEffect(() => {
+        console.log("fdsfds");
+        getItems(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction);
+    }, []);
+
+    useEffect(() => {
+        console.log("useEffect triggered");
+        console.log("page:", page);
+        console.log("pageSize:", pageSize);
+        console.log("filterValue:", filterValue);
+        console.log("sortDescriptor:", sortDescriptor);
+
+        getItems(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction);
+    }, [page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction]);
+
+
+
+
+    const bottomContent = useMemo(() => {
+        console.log(items);
+        if(items){
+            return (
+                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
+            );
+        }
+        return (
+            <></>
+        );
+
+    }, [items?.pageNumber, items?.totalPages]);
+
 
     return (
         <Table
@@ -38,11 +93,18 @@ export const CustomTable = ({ tableBody, columns, topContent, bottomContent, sor
             selectedKeys={selectedKeys}
             selectionMode="multiple"
             onSelectionChange={setSelectedKeys}
-            topContent={topContent}
+            topContent={<CustomTableHeader
+                onPageSizeChange={setPageSize}
+                filterValue={filterValue}
+                setFilterValue={setFilterValue}
+                searchLabel={searchLabel}
+                totalLabel={totalLabel}
+                onCreateClick={() => {onOpenChange()}}
+                totalRecords={items ? items.totalRecords : 0}/>}
             topContentPlacement="outside"
             bottomContent={bottomContent}
             sortDescriptor={sortDescriptor}
-            onSortChange={onSortChange}
+            onSortChange={setSortDescriptor}
         >
             <TableHeader columns={columns}>
                 {(column) => (
@@ -60,3 +122,5 @@ export const CustomTable = ({ tableBody, columns, topContent, bottomContent, sor
         </Table>
     );
 };
+
+export default CustomTable;
