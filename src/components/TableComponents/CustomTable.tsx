@@ -8,7 +8,7 @@ import {
 import {
     JSXElementConstructor, Key,
     ReactElement,
-    useEffect, useImperativeHandle, useMemo,
+    useEffect, useMemo,
     useState
 } from "react";
 import {IColumn} from "../../lib/types/customTableTypes.ts";
@@ -23,7 +23,7 @@ export const CustomTable = ({ tableBody, columns, searchLabel, totalLabel, getIt
     totalLabel: string,
     getItems: (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => void,
     onOpenChange: () => void,
-    items: PagedResponse<any>,
+    items: PagedResponse<unknown>,
     onRefresh:  React.Dispatch<React.SetStateAction<boolean>>,
     refresh: boolean
 }) => {

@@ -32,14 +32,6 @@ export const CustomTableHeader = (
     const { theme, setTheme } = useTheme();
 
 
-    useEffect(() => {
-        // let listColumns:string[] = [];
-        // for (const column in columns) {
-        //     listColumns.push(column.name);
-        // }
-        // setVisibleColumns(listColumns);
-    }, []);
-
     const onSearchChange = useCallback((value:string) => {
         if (value) {
             setFilterValue(value);

@@ -1,6 +1,6 @@
 
 import {formHttp, http} from "../../../http.ts";
-import {IGroupCreate, IGroupModel, IGroupUpdate, ISubjectCreate, ISubjectModel} from "../types/groups.ts";
+import {IGroupCreate, IGroupModel, IGroupUpdate} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
 

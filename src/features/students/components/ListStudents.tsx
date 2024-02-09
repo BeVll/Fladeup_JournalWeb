@@ -10,18 +10,16 @@ import {
     TableCell,
     TableRow, Tooltip, useDisclosure
 } from "@nextui-org/react";
-import {useEffect, useMemo, useState} from "react";
+import {Key, useState} from "react";
 import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
-import {IGroupModel, IStudentModel} from "../types/students.ts";
+import {IStudentModel} from "../types/students.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
-import {CustomTableHeader} from "../../../components/TableComponents/CustomTableHeader.tsx";
 import {CreateGroup} from "./CreateGroup.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
 import {EditGroup} from "./EditGroup.tsx";
-import {CustomPagination} from "../../../components/TableComponents/CustomPagination.tsx";
 import StudentApi from "../api/StudentApi.ts";
 import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
@@ -48,38 +46,20 @@ export const ListStudents = () => {
     const [deleteItem, setDeleteItem] = useState<IGroupModel>();
     const [editGroup, setEditGroup] = useState<IGroupModel>();
     const [isLoading, setLoading] = useState<boolean>(true);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [filterValue, setFilterValue] = useState("");
-    const [sortDescriptor, setSortDescriptor] = useState({
-        column: "id",
-        direction: "ascending",
-    });
+    const [isRefresh, setRefresh] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        getItems();
-    }, [page, pageSize, filterValue, sortDescriptor]);
-
-    const getItems = () => {
+    const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
-        StudentApi.getAllStudents(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(res => {
+
+        StudentApi.getAllStudents(page, pageSize, filterValue, column, direction).then(res => {
             setItems(res.data);
             console.log(res.data);
             setLoading(false);
         });
-
     }
 
-    const checkYears = (start: number, end: number) : boolean => {
-        let dt = new Date();
-        if(dt.getFullYear() == start || dt.getFullYear() == end)
-            return true;
-        else
-            return false;
-
-    }
 
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
@@ -94,24 +74,11 @@ export const ListStudents = () => {
             StudentApi.deleteGroup(deleteItem?.id).then(res => {
                 console.log(res.data);
                 setOpenDelete(false);
-                getItems();
+                setRefresh(true);
             })
         }
-
     }
 
-
-    const bottomContent = useMemo(() => {
-        if(items){
-            return (
-                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
-            );
-        }
-            return (
-                <></>
-            );
-
-    }, [items?.pageNumber, items?.totalPages]);
 
     // @ts-ignore
     return (
@@ -137,22 +104,13 @@ export const ListStudents = () => {
 
                 <CustomTable
                     columns={columns}
-                    sortDescriptor={sortDescriptor}
-                    onSortChange={setSortDescriptor}
-                    topContent={
-                    <CustomTableHeader
-                        onPageSizeChange={setPageSize}
-                        onCreateClick={() => {onOpenChange()}}
-                        totalRecords={items ? items.totalRecords : 0}
-                        filterValue={filterValue}
-                        setFilterValue={setFilterValue}
-                        searchLabel={"Search by id, names, dates..."}
-                        totalLabel={"Total students:"}
-
-                    />
-                     }
-
-                    bottomContent={bottomContent}
+                    totalLabel={"Total subjects: "}
+                    searchLabel={"Search by name, color"}
+                    getItems={getItems}
+                    items={items}
+                    refresh={isRefresh}
+                    onRefresh={setRefresh}
+                    onOpenChange={onOpenChange}
                     tableBody={
                         <TableBody emptyContent={!isLoading ? "No students found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
                         {(item: IStudentModel) => (
