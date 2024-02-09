@@ -27,7 +27,7 @@ import {CustomPagination} from "../../../components/TableComponents/CustomPagina
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 export const ListSubjects = () => {
-    const [subjects, setSubjects] = useState<PagedResponse<ISubjectModel[]>>()
+    const [items, setItems] = useState<PagedResponse<ISubjectModel[]>>()
     const {isOpen, onOpenChange} = useDisclosure();
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
@@ -39,20 +39,26 @@ export const ListSubjects = () => {
     const [pageSize, setPageSize] = useState(5);
     const [filterValue, setFilterValue] = useState("");
 
+    const [sortDescriptor, setSortDescriptor] = useState({
+        column: "id",
+        direction: "ascending",
+    });
+
     useEffect(() => {
         getSubjects();
-    }, [page, pageSize, filterValue]);
+    }, [page, pageSize, filterValue, sortDescriptor]);
 
     const getSubjects = () => {
         setLoading(true);
-        SubjectApi.getAllSubjects(page, pageSize, filterValue).then(res => {
-            setSubjects(res.data);
+
+        SubjectApi.getAllSubjects(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(async res => {
+            setItems(res.data);
             console.log(res.data);
             setLoading(false);
+
         });
 
     }
-
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
         {name: "NAME", uid: "name", sortable: true},
@@ -60,21 +66,35 @@ export const ListSubjects = () => {
         {name: "ACTIONS", uid: "actions", sortable: false},
     ];
 
+    const sortedItems = useMemo(() => {
+        console.log(sortDescriptor);
+        if(items){
+            return [...items.data].sort((a, b) => {
+                const first = a[sortDescriptor.column];
+                const second = b[sortDescriptor.column];
+                const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+                return sortDescriptor.direction === "descending" ? -cmp : cmp;
+            });
+        }
+        return items;
+    }, [sortDescriptor, items]);
+
     const bottomContent = useMemo(() => {
-        if(subjects){
+        if(items){
             return (
-                <CustomPagination pageNumber={subjects.pageNumber} totalPages={subjects.totalPages} setPage={setPage} page={page}/>
+                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
             );
         }
             return (
                 <></>
             );
 
-    }, [subjects?.pageNumber, subjects?.totalPages]);
+    }, [items?.pageNumber, items?.totalPages]);
 
     // @ts-ignore
     return (
-        subjects ?
+        items ?
             <>
 
                 <CreateSubject isOpen={isOpen} onCreated={getSubjects} onOpenChange={onOpenChange}/>
@@ -83,11 +103,13 @@ export const ListSubjects = () => {
 
                 <CustomTable
                     columns={columns}
+                    sortDescriptor={sortDescriptor}
+                    onSortChange={setSortDescriptor}
                     topContent={
                     <CustomTableHeader
                         onPageSizeChange={setPageSize}
                         onCreateClick={() => {onOpenChange()}}
-                        totalRecords={subjects.totalRecords}
+                        totalRecords={items.totalRecords}
                         filterValue={filterValue}
                         setFilterValue={setFilterValue}
                         searchLabel={"Search by id, name, color..."}
@@ -97,7 +119,7 @@ export const ListSubjects = () => {
 
                     bottomContent={bottomContent}
                     tableBody={
-                    <TableBody emptyContent={"No subjects found"} loadingContent={<Spinner/>} isLoading={isLoading} items={subjects.data}>
+                    <TableBody emptyContent={!isLoading ? "No subjects found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : sortedItems}>
                         {(item) => (
                             <TableRow key={item.id}>
                                 <TableCell>
@@ -165,7 +187,9 @@ export const ListSubjects = () => {
                 />
             </>
             :
-            <></>
+            <div className="min-h-[300px] flex items-center justify-center">
+                <Spinner size={"lg"}/>
+            </div>
 
 
     );

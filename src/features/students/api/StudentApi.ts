@@ -11,17 +11,16 @@ import {
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 const StudentApi = {
-    getAllStudents: async function (page: number, pageSize: number, filterValue: string) {
+    getAllStudents: async function (page: number, pageSize: number, filterValue: string, sortBy: string, sortDirection: string) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
-            url = "/Student?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue;
+            url = "/Student?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
         else
-            url = "/Student?page="+page+"&pageSize="+pageSize;
+            url = "/Student?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 
         const response = await http.get<PagedResponse<IStudentModel[]>>(url);
         return response;
     },
-
     createGroup: async function (values: IGroupCreate) {
         const response  = await formHttp.post<ISubjectModel>("/Class/create", values);
         return response;

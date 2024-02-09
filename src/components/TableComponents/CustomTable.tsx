@@ -14,22 +14,16 @@ import {JSXElementConstructor, ReactComponentElement, ReactElement, useCallback,
 import {IColumn} from "../../lib/types/customTableTypes.ts";
 import {CustomTableHeader} from "./CustomTableHeader.tsx";
 
-export const CustomTable = ({ tableBody, columns, topContent, bottomContent}:{
+export const CustomTable = ({ tableBody, columns, topContent, bottomContent, sortDescriptor, onSortChange}:{
     tableBody: ReactElement<TableBodyProps<object>, string | JSXElementConstructor<any>>,
     columns: IColumn[],
     topContent: React.ReactNode,
-    bottomContent: React.ReactNode
+    bottomContent: React.ReactNode,
+    sortDescriptor:any,
+    onSortChange:  React.Dispatch<React.SetStateAction<{column: string, direction: string}>>
 }) => {
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
-    const [sortDescriptor, setSortDescriptor] = useState({
-        column: "age",
-        direction: "ascending",
-    });
     const [page, setPage] = useState(1);
-
-
-
-
 
     return (
         <Table
@@ -47,7 +41,8 @@ export const CustomTable = ({ tableBody, columns, topContent, bottomContent}:{
             topContent={topContent}
             topContentPlacement="outside"
             bottomContent={bottomContent}
-
+            sortDescriptor={sortDescriptor}
+            onSortChange={onSortChange}
         >
             <TableHeader columns={columns}>
                 {(column) => (

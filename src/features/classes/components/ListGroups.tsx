@@ -27,7 +27,7 @@ import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 export const ListGroups = () => {
-    const [groups, setGroups] = useState<PagedResponse<IGroupModel[]>>()
+    const [items, setItems] = useState<PagedResponse<IGroupModel[]>>()
     const {isOpen, onOpenChange} = useDisclosure();
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
@@ -38,15 +38,20 @@ export const ListGroups = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [filterValue, setFilterValue] = useState("");
+    const [sortDescriptor, setSortDescriptor] = useState({
+        column: "id",
+        direction: "ascending",
+    });
+
 
     useEffect(() => {
         getItems();
-    }, [page, pageSize, filterValue]);
+    }, [page, pageSize, filterValue, sortDescriptor]);
 
     const getItems = () => {
         setLoading(true);
-        GroupApi.getAllGroups(page, pageSize, filterValue).then(res => {
-            setGroups(res.data);
+        GroupApi.getAllGroups(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(res => {
+            setItems(res.data);
             console.log(res.data);
             setLoading(false);
         });
@@ -65,7 +70,7 @@ export const ListGroups = () => {
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
         {name: "NAME", uid: "name", sortable: true},
-        {name: "YEARS", uid: "years", sortable: false},
+        {name: "YEARS", uid: "yearOfStart", sortable: true},
         {name: "ACTIONS", uid: "actions", sortable: false},
     ];
 
@@ -80,20 +85,21 @@ export const ListGroups = () => {
 
     }
 
+
     const bottomContent = useMemo(() => {
-        if(groups){
+        if(items){
             return (
-                <CustomPagination pageNumber={groups.pageNumber} totalPages={groups.totalPages} setPage={setPage} page={page}/>
+                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
             );
         }
             return (
                 <></>
             );
 
-    }, [groups?.pageNumber, groups?.totalPages]);
+    }, [items?.pageNumber, items?.totalPages]);
 
     return (
-        groups ?
+        items ?
             <>
 
                 <CreateGroup
@@ -111,93 +117,103 @@ export const ListGroups = () => {
                         isOpen={isOpenDelete}
                     />
                 }
-                {editGroup && <EditGroup item={editGroup} onEdited={getItems} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
+                {editGroup &&
+                    <EditGroup item={editGroup} onEdited={getItems} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
 
                 <CustomTable
                     columns={columns}
+                    sortDescriptor={sortDescriptor}
+                    onSortChange={setSortDescriptor}
                     topContent={
-                    <CustomTableHeader
-                        onPageSizeChange={setPageSize}
-                        onCreateClick={() => {onOpenChange()}}
-                        totalRecords={groups.totalRecords}
-                        filterValue={filterValue}
-                        setFilterValue={setFilterValue}
-                        searchLabel={"Search by id, name, years..."}
-                        totalLabel={"Total groups:"}
-                    />
-                     }
+                        <CustomTableHeader
+                            onPageSizeChange={setPageSize}
+                            onCreateClick={() => {
+                                onOpenChange()
+                            }}
+                            totalRecords={items.totalRecords}
+                            filterValue={filterValue}
+                            setFilterValue={setFilterValue}
+                            searchLabel={"Search by id, name, years..."}
+                            totalLabel={"Total groups:"}
+                        />
+                    }
 
                     bottomContent={bottomContent}
                     tableBody={
-                    <TableBody emptyContent={"No subjects found"} loadingContent={<Spinner/>} isLoading={isLoading} items={groups.data}>
-                        {(item: IGroupModel) => (
-                            <TableRow key={item.id}>
-                                <TableCell>
-                                    {item.id}
-                                </TableCell>
-                                <TableCell>
-                                    {item.name}
-                                </TableCell>
-                                <TableCell>
-                                    <Chip className="font-black" color={checkYears(item.yearOfStart, item.yearOfEnd) ? "primary" : "danger"} size="sm" variant="flat">
-                                        {item.yearOfStart}/{item.yearOfEnd}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="relative flex justify-end items-center gap-2">
-                                        <Dropdown>
-                                            <DropdownTrigger>
-                                                <Button
-                                                    isIconOnly
-                                                    size="sm" variant="light"
-                                                >
-                                                    <ThreeDotsVertical className="text-default-300" />
-                                                </Button>
-                                            </DropdownTrigger>
-                                            <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
-                                                <DropdownItem
-                                                    key="view"
-                                                    shortcut="⌘N"
-                                                    startContent={<EyeFilledIcon className={iconClasses} />}
-                                                >
-                                                    View
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    key="edit"
-                                                    shortcut="⌘⇧E"
-                                                    startContent={<EditDocumentIcon className={iconClasses} />}
-                                                    onPress={() => {
-                                                        setEditGroup(item);
-                                                        setOpenEdit(true);
-                                                    }}
-                                                >
-                                                    Edit
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    key="delete"
-                                                    className="text-danger"
-                                                    color="danger"
-                                                    shortcut="⌘⇧D"
-                                                    onPress={() => {
-                                                        setDeleteItem(item);
-                                                        setOpenDelete(true);
-                                                    }}
-                                                    startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
-                                                >
-                                                    Delete
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </Dropdown>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                }
+                        <TableBody emptyContent={!isLoading ? "No groups found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
+                            {(item: IGroupModel) => (
+                                <TableRow key={item.id}>
+                                    <TableCell>
+                                        {item.id}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip className="font-black"
+                                              color={checkYears(item.yearOfStart, item.yearOfEnd) ? "primary" : "danger"}
+                                              size="sm" variant="flat">
+                                            {item.yearOfStart}/{item.yearOfEnd}
+                                        </Chip>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="relative flex justify-end items-center gap-2">
+                                            <Dropdown>
+                                                <DropdownTrigger>
+                                                    <Button
+                                                        isIconOnly
+                                                        size="sm" variant="light"
+                                                    >
+                                                        <ThreeDotsVertical className="text-default-300"/>
+                                                    </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+                                                    <DropdownItem
+                                                        key="view"
+                                                        shortcut="⌘N"
+                                                        startContent={<EyeFilledIcon className={iconClasses}/>}
+                                                    >
+                                                        View
+                                                    </DropdownItem>
+                                                    <DropdownItem
+                                                        key="edit"
+                                                        shortcut="⌘⇧E"
+                                                        startContent={<EditDocumentIcon className={iconClasses}/>}
+                                                        onPress={() => {
+                                                            setEditGroup(item);
+                                                            setOpenEdit(true);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </DropdownItem>
+                                                    <DropdownItem
+                                                        key="delete"
+                                                        className="text-danger"
+                                                        color="danger"
+                                                        shortcut="⌘⇧D"
+                                                        onPress={() => {
+                                                            setDeleteItem(item);
+                                                            setOpenDelete(true);
+                                                        }}
+                                                        startContent={<DeleteDocumentIcon
+                                                            className={cn(iconClasses, "text-danger")}/>}
+                                                    >
+                                                        Delete
+                                                    </DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    }
                 />
             </>
             :
-            <></>
+            <div className="min-h-[300px] flex items-center justify-center">
+                <Spinner size={"lg"}/>
+            </div>
 
 
     );

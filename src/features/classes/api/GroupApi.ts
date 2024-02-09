@@ -4,17 +4,16 @@ import {IGroupCreate, IGroupModel, IGroupUpdate, ISubjectCreate, ISubjectModel} 
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 const GroupApi = {
-    getAllGroups: async function (page: number, pageSize: number, filterValue: string) {
+    getAllGroups: async function (page: number, pageSize: number, filterValue: string, sortBy: string, sortDirection: string) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
-            url = "/Class?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue;
+            url = "/Class?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
         else
-            url = "/Class?page="+page+"&pageSize="+pageSize;
+            url = "/Class?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 
         const response = await http.get<PagedResponse<IGroupModel[]>>(url);
         return response;
     },
-
     createGroup: async function (values: IGroupCreate) {
         const response  = await formHttp.post<ISubjectModel>("/Class/create", values);
         return response;

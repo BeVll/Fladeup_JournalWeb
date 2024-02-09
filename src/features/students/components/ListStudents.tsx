@@ -26,9 +26,10 @@ import StudentApi from "../api/StudentApi.ts";
 import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {MdPhotoCamera} from "react-icons/md";
+import {useNavigate} from "react-router-dom";
 
 export const ListStudents = () => {
-    const [groups, setGroups] = useState<PagedResponse<IStudentModel[]>>(
+    const [items, setItems] = useState<PagedResponse<IStudentModel[]>>(
         {
             pageNumber: 1,
             pageSize: 0,
@@ -50,15 +51,21 @@ export const ListStudents = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [filterValue, setFilterValue] = useState("");
+    const [sortDescriptor, setSortDescriptor] = useState({
+        column: "id",
+        direction: "ascending",
+    });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         getItems();
-    }, [page, pageSize, filterValue]);
+    }, [page, pageSize, filterValue, sortDescriptor]);
 
     const getItems = () => {
         setLoading(true);
-        StudentApi.getAllStudents(page, pageSize, filterValue).then(res => {
-            setGroups(res.data);
+        StudentApi.getAllStudents(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(res => {
+            setItems(res.data);
             console.log(res.data);
             setLoading(false);
         });
@@ -76,9 +83,9 @@ export const ListStudents = () => {
 
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
-        {name: "IMAGE/NAME", uid: "image/name", sortable: true},
+        {name: "IMAGE/NAME", uid: "firstname", sortable: true},
         {name: "DATE OF BIRTH", uid: "dateOfBirth", sortable: false},
-        {name: "STATUS", uid: "status", sortable: false},
+        {name: "STATUS", uid: "status", sortable: true},
         {name: "ACTIONS", uid: "actions", sortable: false},
     ];
 
@@ -93,21 +100,22 @@ export const ListStudents = () => {
 
     }
 
+
     const bottomContent = useMemo(() => {
-        if(groups){
+        if(items){
             return (
-                <CustomPagination pageNumber={groups.pageNumber} totalPages={groups.totalPages} setPage={setPage} page={page}/>
+                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
             );
         }
             return (
                 <></>
             );
 
-    }, [groups?.pageNumber, groups?.totalPages]);
+    }, [items?.pageNumber, items?.totalPages]);
 
     // @ts-ignore
     return (
-        groups && !isLoading ?
+        items ?
             <>
 
                 <CreateGroup
@@ -129,22 +137,24 @@ export const ListStudents = () => {
 
                 <CustomTable
                     columns={columns}
-
+                    sortDescriptor={sortDescriptor}
+                    onSortChange={setSortDescriptor}
                     topContent={
                     <CustomTableHeader
                         onPageSizeChange={setPageSize}
                         onCreateClick={() => {onOpenChange()}}
-                        totalRecords={groups ? groups.totalRecords : 0}
+                        totalRecords={items ? items.totalRecords : 0}
                         filterValue={filterValue}
                         setFilterValue={setFilterValue}
                         searchLabel={"Search by id, names, dates..."}
                         totalLabel={"Total students:"}
+
                     />
                      }
 
                     bottomContent={bottomContent}
                     tableBody={
-                    <TableBody  emptyContent={"No students found"}  items={groups.data}>
+                        <TableBody emptyContent={!isLoading ? "No students found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
                         {(item: IStudentModel) => (
                             <TableRow key={item.id}>
                                 <TableCell>
@@ -194,6 +204,9 @@ export const ListStudents = () => {
                                                 <DropdownItem
                                                     key="view"
                                                     shortcut="⌘N"
+                                                    onPress={() => {
+                                                        navigate("/students/view/"+item.id);
+                                                    }}
                                                     startContent={<EyeFilledIcon className={iconClasses} />}
                                                 >
                                                     View
@@ -233,9 +246,9 @@ export const ListStudents = () => {
                 />
             </>
             :
-            <>
-                <Spinner size="lg"/>
-            </>
+            <div className="min-h-[300px] flex items-center justify-center">
+                <Spinner size={"lg"}/>
+            </div>
 
     );
 }

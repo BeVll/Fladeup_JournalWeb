@@ -4,12 +4,12 @@ import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 const SubjectApi = {
-    getAllSubjects: async function (page: number, pageSize: number, filterValue: string) {
+    getAllSubjects: async function (page: number, pageSize: number, filterValue: string, sortBy: string, sortDirection: string) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
-            url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue;
+            url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
         else
-            url = "/Subject?page="+page+"&pageSize="+pageSize;
+            url = "/Subject?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 
         const response = await http.get<PagedResponse<ISubjectModel[]>>(url);
         return response;
