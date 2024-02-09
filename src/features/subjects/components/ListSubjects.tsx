@@ -10,7 +10,7 @@ import {
     TableCell,
     TableRow, useDisclosure
 } from "@nextui-org/react";
-import {createRef, Key, useRef, useState} from "react";
+import {Key, useState} from "react";
 import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
 import {ISubjectModel} from "../types/subjects.ts";
 import SubjectApi from "../api/SubjectApi.ts";
@@ -44,7 +44,6 @@ export const ListSubjects = () => {
     const [editItem, setEditItem] = useState<ISubjectModel>();
     const {isOpen, onOpenChange} = useDisclosure();
     const [isLoading, setLoading] = useState<boolean>(false);
-    const childRef = createRef();
     const [isRefresh, setRefresh] = useState<boolean>(false);
     const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
@@ -53,10 +52,9 @@ export const ListSubjects = () => {
             setItems(res.data);
             console.log(res.data);
             setLoading(false);
-
         });
-
     }
+
     const columns: IColumn[] = [
         {name: "ID", uid: "id", sortable: true},
         {name: "NAME", uid: "name", sortable: true},

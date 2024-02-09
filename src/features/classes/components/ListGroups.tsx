@@ -10,56 +10,54 @@ import {
     TableCell,
     TableRow, useDisclosure
 } from "@nextui-org/react";
-import {useEffect, useMemo, useState} from "react";
+import {Key, useState} from "react";
 import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
 import {IGroupModel} from "../types/groups.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
-import {CustomTableHeader} from "../../../components/TableComponents/CustomTableHeader.tsx";
 import {CreateGroup} from "./CreateGroup.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
 import {EditGroup} from "./EditGroup.tsx";
-import {CustomPagination} from "../../../components/TableComponents/CustomPagination.tsx";
 import GroupApi from "../api/GroupApi.ts";
 import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 
 export const ListGroups = () => {
-    const [items, setItems] = useState<PagedResponse<IGroupModel[]>>()
+    const [items, setItems] = useState<PagedResponse<IGroupModel[]>>(
+        {
+            pageNumber: 1,
+            pageSize: 0,
+            totalPages: 1,
+            totalRecords: 0,
+            data: [],
+            succeeded: false,
+            errors: null,
+            message: "fd"
+        }
+    )
     const {isOpen, onOpenChange} = useDisclosure();
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
     const [deleteItem, setDeleteItem] = useState<IGroupModel>();
-    const [editGroup, setEditGroup] = useState<IGroupModel>();
-    const [isLoading, setLoading] = useState<boolean>(true);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [filterValue, setFilterValue] = useState("");
-    const [sortDescriptor, setSortDescriptor] = useState({
-        column: "id",
-        direction: "ascending",
-    });
+    const [editItem, setEditItem] = useState<IGroupModel>();
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const [isRefresh, setRefresh] = useState<boolean>(false);
 
-
-    useEffect(() => {
-        getItems();
-    }, [page, pageSize, filterValue, sortDescriptor]);
-
-    const getItems = () => {
+    const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
-        GroupApi.getAllGroups(page, pageSize, filterValue, sortDescriptor.column, sortDescriptor.direction).then(res => {
+
+        GroupApi.getAllGroups(page, pageSize, filterValue, column, direction).then(res => {
             setItems(res.data);
             console.log(res.data);
             setLoading(false);
         });
-
     }
 
     const checkYears = (start: number, end: number) : boolean => {
-        let dt = new Date();
+        const dt = new Date();
         if(dt.getFullYear() == start || dt.getFullYear() == end)
             return true;
         else
@@ -76,35 +74,21 @@ export const ListGroups = () => {
 
     const onDeleteItem = () => {
         if(deleteItem){
-            GroupApi.deleteGroup(deleteItem?.id).then(res => {
-                console.log(res.data);
+            GroupApi.deleteGroup(deleteItem?.id).then(() => {
                 setOpenDelete(false);
-                getItems();
+                setRefresh(true);
             })
         }
 
     }
 
 
-    const bottomContent = useMemo(() => {
-        if(items){
-            return (
-                <CustomPagination pageNumber={items.pageNumber} totalPages={items.totalPages} setPage={setPage} page={page}/>
-            );
-        }
-            return (
-                <></>
-            );
-
-    }, [items?.pageNumber, items?.totalPages]);
-
     return (
-        items ?
             <>
 
                 <CreateGroup
                     isOpen={isOpen}
-                    onCreated={getItems}
+                    onCreated={() => {setRefresh(true)}}
                     onOpenChange={onOpenChange}
                 />
 
@@ -117,30 +101,20 @@ export const ListGroups = () => {
                         isOpen={isOpenDelete}
                     />
                 }
-                {editGroup &&
-                    <EditGroup item={editGroup} onEdited={getItems} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
+                {editItem &&
+                    <EditGroup item={editItem} onEdited={() => {setRefresh(true)}} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
 
                 <CustomTable
                     columns={columns}
-                    sortDescriptor={sortDescriptor}
-                    onSortChange={setSortDescriptor}
-                    topContent={
-                        <CustomTableHeader
-                            onPageSizeChange={setPageSize}
-                            onCreateClick={() => {
-                                onOpenChange()
-                            }}
-                            totalRecords={items.totalRecords}
-                            filterValue={filterValue}
-                            setFilterValue={setFilterValue}
-                            searchLabel={"Search by id, name, years..."}
-                            totalLabel={"Total groups:"}
-                        />
-                    }
-
-                    bottomContent={bottomContent}
+                    totalLabel={"Total subjects: "}
+                    searchLabel={"Search by name, color"}
+                    getItems={getItems}
+                    items={items}
+                    refresh={isRefresh}
+                    onRefresh={setRefresh}
+                    onOpenChange={onOpenChange}
                     tableBody={
-                        <TableBody emptyContent={!isLoading ? "No groups found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
+                        items ? <TableBody emptyContent={!isLoading ? "No groups found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
                             {(item: IGroupModel) => (
                                 <TableRow key={item.id}>
                                     <TableCell>
@@ -180,7 +154,7 @@ export const ListGroups = () => {
                                                         shortcut="⌘⇧E"
                                                         startContent={<EditDocumentIcon className={iconClasses}/>}
                                                         onPress={() => {
-                                                            setEditGroup(item);
+                                                            setEditItem(item);
                                                             setOpenEdit(true);
                                                         }}
                                                     >
@@ -207,13 +181,11 @@ export const ListGroups = () => {
                                 </TableRow>
                             )}
                         </TableBody>
+                            :
+                            <></>
                     }
                 />
             </>
-            :
-            <div className="min-h-[300px] flex items-center justify-center">
-                <Spinner size={"lg"}/>
-            </div>
 
 
     );

@@ -1,22 +1,19 @@
 import {
     Button,
-    Input,
     Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
     ModalHeader,
-    useDisclosure
 } from "@nextui-org/react";
-import {Circle} from "@uiw/react-color";
 import {ISubjectModel} from "../types/subjects.ts";
 import SubjectApi from "../api/SubjectApi.ts";
 
-export const DeleteSubject = ({onOpenChange, isOpen, item, onDeleted}:{item: ISubjectModel, onOpenChange: any, isOpen: boolean, onDeleted:Function}) => {
+export const DeleteSubject = ({onOpenChange, isOpen, item, onDeleted}:{item: ISubjectModel, onOpenChange: (state:boolean) => void, isOpen: boolean, onDeleted:() => void}) => {
 
 
     const deleteSubject = () => {
-        SubjectApi.deleteSubject(item?.id).then(res => {
+        SubjectApi.deleteSubject(item?.id).then(() => {
             onOpenChange(false);
             onDeleted();
         })

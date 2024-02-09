@@ -2,9 +2,10 @@
 import {formHttp, http} from "../../../http.ts";
 import {IGroupCreate, IGroupModel, IGroupUpdate, ISubjectCreate, ISubjectModel} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
+import {Key} from "react";
 
 const GroupApi = {
-    getAllGroups: async function (page: number, pageSize: number, filterValue: string, sortBy: string, sortDirection: string) {
+    getAllGroups: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
             url = "/Class?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
@@ -15,12 +16,12 @@ const GroupApi = {
         return response;
     },
     createGroup: async function (values: IGroupCreate) {
-        const response  = await formHttp.post<ISubjectModel>("/Class/create", values);
+        const response  = await formHttp.post("/Class/create", values);
         return response;
     },
 
     editGroup: async function (values: IGroupUpdate) {
-        const response  = await formHttp.put<IGroupModel>("Class", values);
+        const response  = await formHttp.put("Class", values);
         return response;
     },
 

@@ -17,17 +17,17 @@ const SubjectApi = {
     },
 
     createSubject: async function (values: ISubjectCreate) {
-        const response  = await formHttp.post<ISubjectModel>("/Subject/create", values);
+        const response  = await formHttp.post("/Subject/create", values);
         return response;
     },
 
     editSubject: async function (values: ISubjectModel) {
-        const response  = await formHttp.put<ISubjectModel>("/Subject/update", values);
+        const response  = await formHttp.put("/Subject/update", values);
         return response;
     },
 
     deleteSubject: async function (id: number) {
-        const response = await http.delete<ISubjectModel>("/Subject/delete/"+id);
+        const response = await http.delete("/Subject/delete/"+id);
         return response;
     },
 

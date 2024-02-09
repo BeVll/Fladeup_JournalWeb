@@ -1,29 +1,21 @@
 import {
     Button,
-    Checkbox,
     Input,
-    Link,
     Modal,
     ModalBody,
     ModalContent,
     ModalFooter,
-    ModalHeader, useDisclosure
+    ModalHeader
 } from "@nextui-org/react";
 import {useFormik} from "formik";
-import AuthApi from "../../auth/api/AuthApi.ts";
-import {formHttp, http} from "../../../http.ts";
-import {jwtDecode} from "jwt-decode";
-import {AuthUserActionType, IUser} from "../../../lib/store/types.ts";
-import {useDispatch} from "react-redux";
+
 import SubjectApi from "../api/SubjectApi.ts";
-import {Circle, Colorful} from "@uiw/react-color";
-import {useState} from "react";
+import {Colorful} from "@uiw/react-color";
 import {ISubjectCreate} from "../types/subjects.ts";
 import * as Yup from 'yup';
 
-export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onCreated:Function}) => {
+export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, onCreated:() => void}) => {
 
-    const [hex, setHex] = useState("#fff");
 
     const SignupSchema = Yup.object().shape({
         name: Yup.string()
@@ -45,7 +37,7 @@ export const CreateSubject = ({ isOpen, onOpenChange, onCreated }: {isOpen: bool
         initialValues: initialValues,
         validationSchema: SignupSchema,
         onSubmit: values => {
-            SubjectApi.createSubject(values).then(res => {
+            SubjectApi.createSubject(values).then(() => {
                 formik.resetForm();
                 onCreated();
                 onOpenChange(false);

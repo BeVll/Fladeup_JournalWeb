@@ -47,7 +47,7 @@ export const EditSubject = ({ isOpen, onOpenChange, onEdited, item }: {isOpen: b
         validationSchema: SignupSchema,
         onSubmit: values => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            SubjectApi.editSubject(values).then(res => {
+            SubjectApi.editSubject(values).then(() => {
                 onEdited();
                 onOpenChange(false);
             })
