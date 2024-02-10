@@ -10,12 +10,15 @@ export interface IStudentModel{
     status: string,
 }
 
-export interface IGroupCreate{
-    name: string,
-    shortName: string,
-    formOfStudy: string,
-    yearOfStart: number,
-    yearOfEnd: number
+export interface IStudentCreate{
+    firstname: string,
+    lastname: string,
+    image: string|undefined,
+    indetificateCode: string|undefined,
+    dateOfBirth: Date,
+    placeOfBirth: string,
+    sex: string,
+    national: string
 }
 
 export interface IGroupUpdate{

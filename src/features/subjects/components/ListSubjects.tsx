@@ -94,12 +94,12 @@ export const ListSubjects = () => {
                                     </Chip>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="relative flex justify-end items-center gap-2">
+                                    <div className="relative flex justify-end items-center gap-2 text-white font-bold w-[500px]">
                                         <Dropdown>
                                             <DropdownTrigger>
                                                 <Button
                                                     isIconOnly
-                                                    size="sm" variant="light"
+                                                    size="sm"  variant="light"
                                                 >
                                                     <ThreeDotsVertical className="text-default-300" />
                                                 </Button>

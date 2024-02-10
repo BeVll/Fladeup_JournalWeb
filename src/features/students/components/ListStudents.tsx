@@ -15,7 +15,6 @@ import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
 import {IStudentModel} from "../types/students.ts";
 import {IColumn} from "../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
-import {CreateGroup} from "./CreateGroup.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
@@ -25,6 +24,7 @@ import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {MdPhotoCamera} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
+import {IGroupModel} from "../../classes/types/groups.ts";
 
 export const ListStudents = () => {
     const [items, setItems] = useState<PagedResponse<IStudentModel[]>>(
@@ -85,12 +85,6 @@ export const ListStudents = () => {
         items ?
             <>
 
-                <CreateGroup
-                    isOpen={isOpen}
-                    onCreated={getItems}
-                    onOpenChange={onOpenChange}
-                />
-
                 {deleteItem &&
                     <DeleteModal
                         title={"Delete group"}
@@ -110,7 +104,7 @@ export const ListStudents = () => {
                     items={items}
                     refresh={isRefresh}
                     onRefresh={setRefresh}
-                    onOpenChange={onOpenChange}
+                    onOpenChange={() => {navigate("/students/create")}}
                     tableBody={
                         <TableBody emptyContent={!isLoading ? "No students found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
                         {(item: IStudentModel) => (

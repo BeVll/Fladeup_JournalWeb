@@ -23,6 +23,7 @@ import {ListGroups} from "./features/classes/components/ListGroups.tsx";
 import {StudentsPage} from "./pages/StudentsPage.tsx";
 import {ListStudents} from "./features/students/components/ListStudents.tsx";
 import {ViewStudent} from "./features/students/components/ViewStudent.tsx";
+import {CreateStudent} from "./features/students/components/CreateStudent.tsx";
 
 function App() {
     const dispatch = useDispatch();
@@ -94,6 +95,7 @@ function App() {
                                   <Route path="students" element={<StudentsPage/>}>
                                       <Route index element={<ListStudents/>}/>
                                       <Route path="view/:id" element={<ViewStudent/>}/>
+                                      <Route path="create" element={<CreateStudent/>}/>
                                   </Route>
                                   {/*<Route path="blogs" element={<Blogs />} />*/}
                                   {/*<Route path="contact" element={<Contact />} />*/}
