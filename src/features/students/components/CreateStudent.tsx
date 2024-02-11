@@ -23,7 +23,10 @@ export const CreateStudent = () => {
         dateOfBirth: new Date(),
         placeOfBirth: "",
         sex: "",
-        national: ""
+        national: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
     }
 
     const formik = useFormik({
@@ -66,13 +69,20 @@ export const CreateStudent = () => {
                     <div className={"grid grid-cols-2 gap-4"}>
                         <Input
                             isRequired
+                            name={"firstname"}
+                            value={formik.values.firstname}
+                            onChange={formik.handleChange}
                             type="text"
                             label="Firstname"
+
                             labelPlacement={"outside"}
                             placeholder={"Enter firstname"}
                         />
                         <Input
                             isRequired
+                            name={"lastname"}
+                            value={formik.values.lastname}
+                            onChange={formik.handleChange}
                             type="text"
                             label="Lastname"
                             labelPlacement={"outside"}
@@ -82,6 +92,9 @@ export const CreateStudent = () => {
                     <div className={""}>
                         <Input
                             isRequired
+                            name={"email"}
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
                             type="email"
                             label="Email"
                             labelPlacement={"outside"}
@@ -91,6 +104,9 @@ export const CreateStudent = () => {
                     <div className={"grid grid-cols-2 gap-4"}>
                         <Select
                             isRequired
+                            name={"national"}
+                            value={formik.values.national}
+                            onChange={formik.handleChange}
                             label="National"
                             labelPlacement={"outside"}
                             placeholder={"Select nationality"}>
@@ -98,6 +114,9 @@ export const CreateStudent = () => {
                         </Select>
                         <Input
                             isRequired
+                            name={"placeOfBirth"}
+                            value={formik.values.placeOfBirth}
+                            onChange={formik.handleChange}
                             type="text"
                             label="Place of birth"
                             labelPlacement={"outside"}
@@ -107,6 +126,9 @@ export const CreateStudent = () => {
                     <div className={"grid grid-cols-2 gap-4"}>
                         <Input
                             isRequired
+                            name={"dateOfBirth"}
+                            value={formik.values.dateOfBirth}
+                            onChange={formik.handleChange}
                             type="date"
                             label="Date of birth"
                             labelPlacement={"outside"}
@@ -114,6 +136,9 @@ export const CreateStudent = () => {
                         />
                         <Select
                             isRequired
+                            name={"sex"}
+                            value={formik.values.sex}
+                            onChange={formik.handleChange}
                             label="Sex"
                             labelPlacement={"outside"}
                             placeholder={"Select sex (male or female)"}>

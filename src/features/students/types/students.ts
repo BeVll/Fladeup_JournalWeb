@@ -18,7 +18,10 @@ export interface IStudentCreate{
     dateOfBirth: Date,
     placeOfBirth: string,
     sex: string,
-    national: string
+    national: string,
+    email: string,
+    password: string,
+    confirmPassword: string
 }
 
 export interface IGroupUpdate{
