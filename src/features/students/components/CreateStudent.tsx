@@ -1,4 +1,4 @@
-import {Button, Image, Input, Tooltip} from "@nextui-org/react";
+import {Button, Image, Input, Select, Tooltip} from "@nextui-org/react";
 import {MdPhotoCamera} from "react-icons/md";
 import * as Yup from "yup";
 import {IGroupCreate} from "../../classes/types/groups.ts";
@@ -88,7 +88,38 @@ export const CreateStudent = () => {
                             placeholder={"Enter email"}
                         />
                     </div>
+                    <div className={"grid grid-cols-2 gap-4"}>
+                        <Select
+                            isRequired
+                            label="National"
+                            labelPlacement={"outside"}
+                            placeholder={"Select nationality"}>
 
+                        </Select>
+                        <Input
+                            isRequired
+                            type="text"
+                            label="Place of birth"
+                            labelPlacement={"outside"}
+                            placeholder={"Enter place of birth"}
+                        />
+                    </div>
+                    <div className={"grid grid-cols-2 gap-4"}>
+                        <Input
+                            isRequired
+                            type="date"
+                            label="Date of birth"
+                            labelPlacement={"outside"}
+                            placeholder={"Enter date of birth"}
+                        />
+                        <Select
+                            isRequired
+                            label="Sex"
+                            labelPlacement={"outside"}
+                            placeholder={"Select sex (male or female)"}>
+
+                        </Select>
+                    </div>
                 </div>
             </div>
 
