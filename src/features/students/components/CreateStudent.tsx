@@ -1,4 +1,4 @@
-import {Button, Image, Input, Select, Tooltip} from "@nextui-org/react";
+import {Button, Image, Input, Select, SelectItem, Tooltip} from "@nextui-org/react";
 import {MdPhotoCamera} from "react-icons/md";
 import * as Yup from "yup";
 import {IGroupCreate} from "../../classes/types/groups.ts";
@@ -7,6 +7,20 @@ import SubjectApi from "../../classes/api/GroupApi.ts";
 import {IStudentCreate} from "../types/students.ts";
 
 export const CreateStudent = () => {
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                formik.setFieldValue('image', e.target.result);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
 
     const SignupSchema = Yup.object().shape({
         name: Yup.string()
@@ -52,7 +66,7 @@ export const CreateStudent = () => {
                     <div className={"flex gap-4"}>
                         {formik.values.image ?
                             <Image className="rounded w-full"
-                                   src={import.meta.env.VITE_STORAGE_URL + formik.values.image}/>
+                                   src={formik.values.image}/>
                             :
                             <div
                                 className="border-2 rounded-xl p-4 border-content3 flex items-center h-[140px] w-[105px]">
@@ -62,7 +76,20 @@ export const CreateStudent = () => {
 
                         }
                         <div className={"flex flex-col gap-2 justify-center"}>
-                            <Button size={"sm"} color={"primary"} className="w-fit">Change avatar</Button>
+                            <div className="w-fit relative">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                    id="upload-image" // <-- Make sure this matches htmlFor in the label
+                                />
+                                <label htmlFor="upload-image" className="h-[200px]">
+                                    <Button type={"button"}  size={"sm"} color={"primary"} className="w-fit cursor-pointer">
+                                        Change avatar
+                                    </Button>
+                                </label>
+                            </div>
                             <span className="text-default-400 text-[11px]">JPG, GIF or PNG, 4MB max</span>
                         </div>
                     </div>
@@ -142,7 +169,8 @@ export const CreateStudent = () => {
                             label="Sex"
                             labelPlacement={"outside"}
                             placeholder={"Select sex (male or female)"}>
-
+                            <SelectItem key={"male"}>Male</SelectItem>
+                            <SelectItem key={"female"}>Female</SelectItem>
                         </Select>
                     </div>
                 </div>
