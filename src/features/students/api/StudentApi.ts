@@ -29,8 +29,8 @@ const StudentApi = {
         return response;
     },
 
-    deleteGroup: async function (id: number) {
-        const response = await http.delete("/Class/delete/"+id);
+    deleteStudent: async function (id: number) {
+        const response = await http.delete("/Student/delete/"+id);
         return response;
     },
 

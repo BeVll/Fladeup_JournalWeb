@@ -117,7 +117,7 @@ export const CreateStudent = () => {
                     <div className={"flex flex-col gap-4"}>
                         <div className={"flex gap-4"}>
                             {image ?
-                                <Image className="rounded w-full h-[140px] w-[105px]"
+                                <Image className="rounded w-full h-[140px] object-cover w-[105px]"
                                        src={image}/>
                                 :
                                 <div

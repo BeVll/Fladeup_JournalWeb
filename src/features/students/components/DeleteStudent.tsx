@@ -6,21 +6,21 @@ import {
     ModalFooter,
     ModalHeader,
 } from "@nextui-org/react";
-import {IGroupModel, ISubjectModel} from "../types/students.ts";
+import {IStudentModel} from "../types/students.ts";
 import StudentApi from "../api/StudentApi.ts";
 
-export const DeleteGroup = ({onOpenChange, isOpen, group, onDeleted}:{group: IGroupModel, onOpenChange: any, isOpen: boolean, onDeleted:Function}) => {
+export const DeleteStudent = ({onOpenChange, isOpen, item, onDeleted}:{item: IStudentModel, onOpenChange: any, isOpen: boolean, onDeleted:Function}) => {
 
 
     const deleteItem = () => {
-        StudentApi.deleteGroup(group?.id).then(res => {
+        StudentApi.deleteStudent(item?.id).then(res => {
             onOpenChange(false);
             onDeleted();
         })
     }
 
     return (
-        group ?
+        item ?
         <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
@@ -34,7 +34,7 @@ export const DeleteGroup = ({onOpenChange, isOpen, group, onDeleted}:{group: IGr
                             <ModalBody>
 
                                 <p>
-                                    Do you want to delete [{group.id}-{group.name}] subject?
+                                    Do you want to delete [{item.id}-{item.firstname} {item.lastname}] student?
                                 </p>
 
                             </ModalBody>
@@ -42,7 +42,7 @@ export const DeleteGroup = ({onOpenChange, isOpen, group, onDeleted}:{group: IGr
                                 <Button color="default" variant="flat" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button  color="danger"  onPress={deleteClass}>
+                                <Button  color="danger"  onPress={deleteItem}>
                                     Delete
                                 </Button>
                             </ModalFooter>

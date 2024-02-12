@@ -71,7 +71,7 @@ export const ListStudents = () => {
 
     const onDeleteItem = () => {
         if(deleteItem){
-            StudentApi.deleteGroup(deleteItem?.id).then(res => {
+            StudentApi.deleteStudent(deleteItem?.id).then(res => {
                 console.log(res.data);
                 setOpenDelete(false);
                 setRefresh(true);
@@ -87,8 +87,8 @@ export const ListStudents = () => {
 
                 {deleteItem &&
                     <DeleteModal
-                        title={"Delete group"}
-                        text={"Do you want to delete group?"}
+                        title={"Delete student"}
+                        text={"Do you want to delete student?"}
                         onDeletePress={onDeleteItem}
                         onOpenChange={setOpenDelete}
                         isOpen={isOpenDelete}
@@ -98,8 +98,8 @@ export const ListStudents = () => {
 
                 <CustomTable
                     columns={columns}
-                    totalLabel={"Total subjects: "}
-                    searchLabel={"Search by name, color"}
+                    totalLabel={"Total students: "}
+                    searchLabel={"Search by firstname, lastname, date of birth"}
                     getItems={getItems}
                     items={items}
                     refresh={isRefresh}
