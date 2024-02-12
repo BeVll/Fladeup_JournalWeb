@@ -2,7 +2,7 @@
 import {formHttp, http} from "../../../http.ts";
 import {
     IGroupCreate,
-    IGroupUpdate,
+    IGroupUpdate, IStudentCreate,
     IStudentModel,
 } from "../types/students.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
@@ -19,8 +19,8 @@ const StudentApi = {
         const response = await http.get<PagedResponse<IStudentModel[]>>(url);
         return response;
     },
-    createGroup: async function (values: IGroupCreate) {
-        const response  = await formHttp.post("/Class/create", values);
+    createStudent: async function (values: IStudentCreate) {
+        const response  = await formHttp.post("/Student/create", values);
         return response;
     },
 

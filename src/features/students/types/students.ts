@@ -13,7 +13,7 @@ export interface IStudentModel{
 export interface IStudentCreate{
     firstname: string,
     lastname: string,
-    image: string|undefined,
+    image: File,
     indetificateCode: string|undefined,
     dateOfBirth: Date,
     placeOfBirth: string,
@@ -21,7 +21,13 @@ export interface IStudentCreate{
     national: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    passport: string|undefined,
+    isLightTheme: boolean,
+    instagram: string|undefined,
+    facebook: string|undefined,
+    twitter: string|undefined,
+    bankAccount: string|undefined
 }
 
 export interface IGroupUpdate{
