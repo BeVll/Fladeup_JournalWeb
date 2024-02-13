@@ -11,6 +11,8 @@ import {
 } from "react-bootstrap-icons";
 import {useTheme} from "next-themes";
 import {useNavigate} from "react-router-dom";
+import {PiStudentBold} from "react-icons/pi";
+import {FaPeopleGroup} from "react-icons/fa6";
 export const Sidebar = () => {
     const { theme, setTheme } = useTheme();
     const navigate = useNavigate();
@@ -46,7 +48,7 @@ export const Sidebar = () => {
                     }
                 >
                     <Button className={"w-[20px]"} onClick={() => {navigate("/students")}}>
-                        <People/>
+                        <PiStudentBold />
                     </Button>
                 </Tooltip>
                 <Tooltip
@@ -77,7 +79,7 @@ export const Sidebar = () => {
                     content={"Groups"}
                 >
                     <Button className={"w-[20px]"} onClick={() => {navigate("/groups")}}>
-                        <Collection/>
+                        <FaPeopleGroup />
                     </Button>
                 </Tooltip>
                 <Tooltip

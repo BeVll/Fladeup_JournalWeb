@@ -71,15 +71,13 @@ export const Header = ({pageTitle}:{pageTitle:string}) => {
                                 key="delete"
                                 className="text-danger"
                                 color="danger"
-
+                                onPress={logout}
                                 shortcut="⌘⇧D"
                                 startContent={<BoxArrowLeft className={"text-danger"}
                                                             onClick={() => {
                                                             }}/>}
                             >
-                                <Button onClick={logout}>
-                                    Logout
-                                </Button>
+                                Logout
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>

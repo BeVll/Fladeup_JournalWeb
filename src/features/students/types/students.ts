@@ -1,4 +1,5 @@
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
+import {IGroupModel} from "../../classes/types/groups.ts";
 
 
 export interface IStudentModel{
@@ -29,7 +30,8 @@ export interface IStudentDetail{
     instagram: string|undefined,
     facebook: string|undefined,
     twitter: string|undefined,
-    bankAccount: string|undefined
+    bankAccount: string|undefined,
+    groups: IGroupModel[]
 }
 
 export interface IStudentCreate{

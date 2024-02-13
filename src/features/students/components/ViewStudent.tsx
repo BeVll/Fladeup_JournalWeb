@@ -1,17 +1,53 @@
 import {useParams, useSearchParams} from "react-router-dom";
-import {Button, Card, CardBody, CardHeader, Chip, Divider, Image} from "@nextui-org/react";
+import {
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    Chip, cn,
+    Divider, Dropdown, DropdownItem, DropdownMenu,
+    DropdownTrigger,
+    Image, Input, Link,
+    Listbox,
+    ListboxItem, Modal, ModalBody, ModalContent, ModalHeader, Tooltip
+} from "@nextui-org/react";
 import {MdEditSquare, MdPhotoCamera} from "react-icons/md";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {IStudentDetail} from "../types/students.ts";
 import StudentApi from "../api/StudentApi.ts";
 import {BsCalendar2HeartFill} from "react-icons/bs";
 import {FaFemale, FaMale} from "react-icons/fa";
 import {InformationItem} from "./InformationItem.tsx";
+import {IoMdAddCircle} from "react-icons/io";
+import {FaPeopleGroup} from "react-icons/fa6";
+import {Search, ThreeDotsVertical} from "react-bootstrap-icons";
+import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
+import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
+import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
+import {useTheme} from "next-themes";
 
 export const ViewStudent = () => {
     const { id } = useParams()
-
+    const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
     const [student, setStudent] = useState<IStudentDetail>();
+    const [isOpenAddGroup, setOpenAddGroup] = useState<boolean>(false);
+    const [page, setPage] = useState(1);
+    const { theme, setTheme } = useTheme();
+    const [filterValue, setFilterValue] = useState("");
+
+    const onSearchChange = useCallback((value:string) => {
+        if (value) {
+            setFilterValue(value);
+            setPage(1);
+        } else {
+            setFilterValue("");
+        }
+    }, []);
+
+    const onClear = useCallback(()=>{
+        setFilterValue("")
+        setPage(1)
+    },[])
 
     useEffect(() => {
         console.log(id);
@@ -43,8 +79,12 @@ export const ViewStudent = () => {
                         <span className="font-bold text-xl ">{student?.firstname} {student?.lastname} </span>
 
                         <div className={"flex gap-2"}>
+
                             <Chip size={"sm"} color={"primary"}>
                                 <span>#{student?.id}</span>
+                            </Chip>
+                            <Chip variant={"flat"} size={"sm"} color={student?.status.toLowerCase() == "student" ? "primary" : "danger"}>
+                                {student?.status}
                             </Chip>
                             <Chip variant={"flat"} size="sm">
                                 <span className="">{student?.national}</span>
@@ -70,6 +110,18 @@ export const ViewStudent = () => {
                 <Button startContent={<MdEditSquare />} color={"primary"}>Edit</Button>
             </div>
             <div className="grid gap-4 lg:grid-cols-3  grid-cols-1 w-full">
+                <Card shadow={"none"} className="border-default-100 border">
+                    <CardHeader>
+                        <h1 className="font-bold">Personal information</h1>
+                    </CardHeader>
+                    <Divider/>
+                    <CardBody>
+                        <InformationItem title={"Email"} text={student?.email}/>
+                        <InformationItem title={"Passport"} text={student?.passport}/>
+                        <InformationItem title={"Indetification code"} text={student?.indetificateCode}/>
+                        <InformationItem title={"Bank account"} text={student?.bankAccount}/>
+                    </CardBody>
+                </Card>
                 <Card shadow={"none"} className=" border-default-100 border">
                     <CardHeader className="flex justify-between">
                         <h1 className="font-bold">Address</h1>
@@ -95,18 +147,68 @@ export const ViewStudent = () => {
                     </CardBody>
                 </Card>
                 <Card shadow={"none"} className="border-default-100 border">
-                    <CardHeader>
-                        <h1 className="font-bold">Mail address</h1>
+                    <CardHeader className="flex justify-between">
+                        <div className="font-bold flex items-center gap-2"><FaPeopleGroup size={20}/> Groups</div>
+                        <Button  startContent={<IoMdAddCircle />} onPress={() => {setOpenAddGroup(true)}}>Add</Button>
                     </CardHeader>
                     <Divider/>
                     <CardBody>
-                        <InformationItem title={"Country"} text={"Poland"}/>
-                        <InformationItem title={"City"} text={"Lublin"}/>
-                        <InformationItem title={"Street"} text={"Sokola, 13/47"}/>
-                        <InformationItem title={"Postal code"} text={"45656"}/>
+                        {student?.groups.map(group => {
+                            return (
+                                <div key={group.id} className="flex flex-row items-center justify-between w-full">
+                                    <Link href={"/groups/view/" + group.id} color={"foreground"} underline={"hover"}>
+                                        {group.name}
+                                    </Link>
+                                    <div className="relative flex items-center gap-2">
+                                        <Tooltip content="Details">
+                                          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                            <EyeFilledIcon className={iconClasses} />
+                                          </span>
+                                        </Tooltip>
+                                        <Tooltip color="danger" content="Delete user">
+                                          <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                                            <DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />
+                                          </span>
+
+                                        </Tooltip>
+                                    </div>
+                                </div>
+                            )
+                        })}
+
                     </CardBody>
                 </Card>
             </div>
+            <Modal
+                isOpen={isOpenAddGroup}
+                onOpenChange={setOpenAddGroup}
+                placement="center">
+                <ModalContent>
+                    <ModalHeader>
+                        Add student to group
+                    </ModalHeader>
+                    <ModalBody>
+                        <Input
+                            classNames={{
+                                base: "max-w-full w-full h-10",
+                                mainWrapper: "h-full",
+                                input: "text-small",
+                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                            }}
+                            className="sm:hidden md:block"
+                            placeholder="Type to search group..."
+                            size="md"
+                            startContent={<Search size={18}/>}
+                            type="search"
+                            variant="bordered"
+                            onClear={onClear}
+                            onValueChange={onSearchChange}
+                            value={filterValue}
+                        />
+
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 };
