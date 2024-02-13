@@ -25,6 +25,7 @@ import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
 import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
 import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
 import {useTheme} from "next-themes";
+import {AddToGroup} from "./AddToGroup.tsx";
 
 export const ViewStudent = () => {
     const { id } = useParams()
@@ -33,21 +34,7 @@ export const ViewStudent = () => {
     const [isOpenAddGroup, setOpenAddGroup] = useState<boolean>(false);
     const [page, setPage] = useState(1);
     const { theme, setTheme } = useTheme();
-    const [filterValue, setFilterValue] = useState("");
 
-    const onSearchChange = useCallback((value:string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
-
-    const onClear = useCallback(()=>{
-        setFilterValue("")
-        setPage(1)
-    },[])
 
     useEffect(() => {
         console.log(id);
@@ -146,7 +133,7 @@ export const ViewStudent = () => {
                         <InformationItem title={"Postal code"} text={"45656"}/>
                     </CardBody>
                 </Card>
-                <Card shadow={"none"} className="border-default-100 border">
+                <Card  shadow={"none"} className="border-default-100 border col-start-1">
                     <CardHeader className="flex justify-between">
                         <div className="font-bold flex items-center gap-2"><FaPeopleGroup size={20}/> Groups</div>
                         <Button  startContent={<IoMdAddCircle />} onPress={() => {setOpenAddGroup(true)}}>Add</Button>
@@ -179,36 +166,7 @@ export const ViewStudent = () => {
                     </CardBody>
                 </Card>
             </div>
-            <Modal
-                isOpen={isOpenAddGroup}
-                onOpenChange={setOpenAddGroup}
-                placement="center">
-                <ModalContent>
-                    <ModalHeader>
-                        Add student to group
-                    </ModalHeader>
-                    <ModalBody>
-                        <Input
-                            classNames={{
-                                base: "max-w-full w-full h-10",
-                                mainWrapper: "h-full",
-                                input: "text-small",
-                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                            }}
-                            className="sm:hidden md:block"
-                            placeholder="Type to search group..."
-                            size="md"
-                            startContent={<Search size={18}/>}
-                            type="search"
-                            variant="bordered"
-                            onClear={onClear}
-                            onValueChange={onSearchChange}
-                            value={filterValue}
-                        />
-
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            <AddToGroup isOpen={isOpenAddGroup} onOpenChange={setOpenAddGroup} item={student}/>
         </div>
     );
 };
