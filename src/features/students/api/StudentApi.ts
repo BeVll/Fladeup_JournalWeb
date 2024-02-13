@@ -2,7 +2,7 @@
 import {formHttp, http} from "../../../http.ts";
 import {
     IGroupCreate,
-    IGroupUpdate, IStudentCreate,
+    IGroupUpdate, IStudentCreate, IStudentDetail,
     IStudentModel,
 } from "../types/students.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
@@ -17,6 +17,10 @@ const StudentApi = {
             url = "/Student?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 
         const response = await http.get<PagedResponse<IStudentModel[]>>(url);
+        return response;
+    },
+    getDetailedStudent: async function (id: string ) {
+        const response = await http.get<IStudentDetail>("/Student/"+id);
         return response;
     },
     createStudent: async function (values: IStudentCreate) {

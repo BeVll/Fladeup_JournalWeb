@@ -10,6 +10,28 @@ export interface IStudentModel{
     status: string,
 }
 
+export interface IStudentDetail{
+    id: number,
+    firstname: string,
+    lastname: string,
+    image: string,
+    status: string,
+    indetificateCode: string|undefined,
+    dateOfBirth: Date,
+    placeOfBirth: string,
+    sex: string,
+    national: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    passport: string|undefined,
+    isLightTheme: boolean,
+    instagram: string|undefined,
+    facebook: string|undefined,
+    twitter: string|undefined,
+    bankAccount: string|undefined
+}
+
 export interface IStudentCreate{
     firstname: string,
     lastname: string,
