@@ -93,8 +93,8 @@ export const ListSubjects = () => {
                                         {item.color}
                                     </Chip>
                                 </TableCell>
-                                <TableCell>
-                                    <div className="relative flex justify-end items-center gap-2 text-white font-bold w-[500px]">
+                                <TableCell align={"right"}>
+                                    <div className="relative flex justify-end items-center gap-2 text-white font-bold ">
                                         <Dropdown>
                                             <DropdownTrigger>
                                                 <Button
