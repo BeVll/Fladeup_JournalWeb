@@ -7,6 +7,7 @@ import {
 } from "../types/students.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
+import {IGroupModel} from "../../classes/types/groups.ts";
 
 const StudentApi = {
     getAllStudents: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
@@ -21,6 +22,23 @@ const StudentApi = {
     },
     getDetailedStudent: async function (id: string ) {
         const response = await http.get<IStudentDetail>("/Student/"+id);
+        return response;
+    },
+    addToGroups: async function (groups: IGroupModel[], studentId: number) {
+        const groupIds: number[] = [];
+
+        groups.forEach(function (value) {
+            groupIds.push(value.id);
+        });
+        const values = {
+            "groupIds": groupIds,
+            "studentId": studentId
+        }
+        const response = await formHttp.post("/Student/addToGroups", values);
+        return response;
+    },
+    removeFromGroup: async function (groupId: number, studentId: number) {
+        const response = await http.delete("/Student/removeFromGroup?studentId="+studentId+"&groupId="+groupId);
         return response;
     },
     createStudent: async function (values: IStudentCreate) {
