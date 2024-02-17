@@ -1,10 +1,10 @@
 import {
-    Button,
+    Button, CardBody,
     Chip, cn,
     Dropdown,
     DropdownItem,
     DropdownMenu,
-    DropdownTrigger,
+    DropdownTrigger, Link,
     Spinner,
     TableBody,
     TableCell,
@@ -23,6 +23,8 @@ import {EditGroup} from "./EditGroup.tsx";
 import GroupApi from "../api/GroupApi.ts";
 import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
 import {PagedResponse} from "../../../lib/types/types.ts";
+import {Outlet, useNavigate} from "react-router-dom";
+import {CustomCard} from "../../../components/CustomCard.tsx";
 
 export const ListGroups = () => {
     const [items, setItems] = useState<PagedResponse<IGroupModel[]>>(
@@ -45,7 +47,7 @@ export const ListGroups = () => {
     const [editItem, setEditItem] = useState<IGroupModel>();
     const [isLoading, setLoading] = useState<boolean>(false);
     const [isRefresh, setRefresh] = useState<boolean>(false);
-
+    const navigate = useNavigate();
     const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
 
@@ -103,88 +105,97 @@ export const ListGroups = () => {
                 }
                 {editItem &&
                     <EditGroup item={editItem} onEdited={() => {setRefresh(true)}} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
+                <CustomCard>
+                    <CardBody className="p-8">
+                        <CustomTable
+                            columns={columns}
+                            totalLabel={"Total subjects: "}
+                            searchLabel={"Search by name, color"}
+                            getItems={getItems}
+                            items={items}
+                            refresh={isRefresh}
+                            onRefresh={setRefresh}
+                            onOpenChange={onOpenChange}
+                            tableBody={
+                                items ? <TableBody emptyContent={!isLoading ? "No groups found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
+                                        {(item: IGroupModel) => (
+                                            <TableRow key={item.id}>
+                                                <TableCell>
+                                                    {item.id}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Link href={"groups/view/"+item.id} color={"foreground"} underline={"hover"}>
+                                                        {item.name}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip className="font-black"
+                                                          color={checkYears(item.yearOfStart, item.yearOfEnd) ? "primary" : "danger"}
+                                                          size="sm" variant="flat">
+                                                        {item.yearOfStart}/{item.yearOfEnd}
+                                                    </Chip>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="relative flex justify-end items-center gap-2">
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <Button
+                                                                    isIconOnly
+                                                                    size="sm" variant="light"
+                                                                >
+                                                                    <ThreeDotsVertical className="text-default-300"/>
+                                                                </Button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+                                                                <DropdownItem
+                                                                    key="view"
+                                                                    shortcut="⌘N"
+                                                                    onPress={() => {
+                                                                        navigate("/groups/view/"+item.id);
+                                                                    }}
+                                                                    startContent={<EyeFilledIcon className={iconClasses}/>}
+                                                                >
+                                                                    View
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="edit"
+                                                                    shortcut="⌘⇧E"
+                                                                    startContent={<EditDocumentIcon className={iconClasses}/>}
+                                                                    onPress={() => {
+                                                                        setEditItem(item);
+                                                                        setOpenEdit(true);
+                                                                    }}
+                                                                >
+                                                                    Edit
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="delete"
+                                                                    className="text-danger"
+                                                                    color="danger"
+                                                                    shortcut="⌘⇧D"
+                                                                    onPress={() => {
+                                                                        setDeleteItem(item);
+                                                                        setOpenDelete(true);
+                                                                    }}
+                                                                    startContent={<DeleteDocumentIcon
+                                                                        className={cn(iconClasses, "text-danger")}/>}
+                                                                >
+                                                                    Delete
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                    :
+                                    <></>
+                            }
+                        />
+                    </CardBody>
+                </CustomCard>
 
-                <CustomTable
-                    columns={columns}
-                    totalLabel={"Total subjects: "}
-                    searchLabel={"Search by name, color"}
-                    getItems={getItems}
-                    items={items}
-                    refresh={isRefresh}
-                    onRefresh={setRefresh}
-                    onOpenChange={onOpenChange}
-                    tableBody={
-                        items ? <TableBody emptyContent={!isLoading ? "No groups found" : <></>} loadingContent={<Spinner/>} isLoading={isLoading} items={isLoading ? [] : items.data}>
-                            {(item: IGroupModel) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>
-                                        {item.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip className="font-black"
-                                              color={checkYears(item.yearOfStart, item.yearOfEnd) ? "primary" : "danger"}
-                                              size="sm" variant="flat">
-                                            {item.yearOfStart}/{item.yearOfEnd}
-                                        </Chip>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="relative flex justify-end items-center gap-2">
-                                            <Dropdown>
-                                                <DropdownTrigger>
-                                                    <Button
-                                                        isIconOnly
-                                                        size="sm" variant="light"
-                                                    >
-                                                        <ThreeDotsVertical className="text-default-300"/>
-                                                    </Button>
-                                                </DropdownTrigger>
-                                                <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
-                                                    <DropdownItem
-                                                        key="view"
-                                                        shortcut="⌘N"
-                                                        startContent={<EyeFilledIcon className={iconClasses}/>}
-                                                    >
-                                                        View
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        key="edit"
-                                                        shortcut="⌘⇧E"
-                                                        startContent={<EditDocumentIcon className={iconClasses}/>}
-                                                        onPress={() => {
-                                                            setEditItem(item);
-                                                            setOpenEdit(true);
-                                                        }}
-                                                    >
-                                                        Edit
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        key="delete"
-                                                        className="text-danger"
-                                                        color="danger"
-                                                        shortcut="⌘⇧D"
-                                                        onPress={() => {
-                                                            setDeleteItem(item);
-                                                            setOpenDelete(true);
-                                                        }}
-                                                        startContent={<DeleteDocumentIcon
-                                                            className={cn(iconClasses, "text-danger")}/>}
-                                                    >
-                                                        Delete
-                                                    </DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                            :
-                            <></>
-                    }
-                />
             </>
 
 

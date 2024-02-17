@@ -176,7 +176,7 @@ export const ViewStudent = () => {
                                             <EyeFilledIcon className={iconClasses}/>
                                           </span>
                                                 </Tooltip>
-                                                <Tooltip color="danger" content="Remove from group">
+                                                <Tooltip closeDelay={0} color="danger" content="Remove from group">
                                                     <Button isIconOnly size={"sm"} variant={"light"}
                                                             onPress={() => removeFromGroup(group.id)}
                                                             className="text-lg text-danger cursor-pointer active:opacity-50">

@@ -5,11 +5,7 @@ import {CustomCard} from "../../components/CustomCard.tsx";
 
 export const Groups = () => {
     return (
-        <CustomCard>
-            <CardBody>
-                <Outlet/>
-            </CardBody>
-        </CustomCard>
+        <Outlet/>
 
     );
 };

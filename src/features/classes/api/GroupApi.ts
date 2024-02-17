@@ -1,8 +1,9 @@
 
 import {formHttp, http} from "../../../http.ts";
-import {IGroupCreate, IGroupModel, IGroupUpdate} from "../types/groups.ts";
+import {IGroupCreate, IGroupDetailed, IGroupModel, IGroupUpdate} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
+import {IStudentDetail} from "../../students/types/students.ts";
 
 const GroupApi = {
     getAllGroups: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
@@ -13,6 +14,10 @@ const GroupApi = {
             url = "/Class?page="+page+"&pageSize="+pageSize + "&sortBy="+sortBy + "&sortDirection="+sortDirection;
 
         const response = await http.get<PagedResponse<IGroupModel[]>>(url);
+        return response;
+    },
+    getDetailedGroup: async function (id:string) {
+        const response = await http.get<IGroupDetailed>("/Class/"+id);
         return response;
     },
     createGroup: async function (values: IGroupCreate) {
