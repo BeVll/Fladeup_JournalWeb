@@ -1,5 +1,6 @@
 import {
     Button,
+    CardBody,
     Chip, cn,
     Dropdown,
     DropdownItem,
@@ -25,6 +26,7 @@ import {PagedResponse} from "../../../lib/types/types.ts";
 import {MdPhotoCamera} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 import {IGroupModel} from "../../classes/types/groups.ts";
+import { CustomCard } from "../../../components/CustomCard.tsx";
 
 export const ListStudents = () => {
     const [items, setItems] = useState<PagedResponse<IStudentModel[]>>(
@@ -95,7 +97,8 @@ export const ListStudents = () => {
                     />
                 }
                 {editGroup && <EditGroup item={editGroup} onEdited={getItems} onOpenChange={setOpenEdit} isOpen={isOpenEdit}/>}
-
+                <CustomCard>
+                    <CardBody className="p-4">
                 <CustomTable
                     columns={columns}
                     totalLabel={"Total students: "}
@@ -196,7 +199,10 @@ export const ListStudents = () => {
                     </TableBody>
                 }
                 />
+                    </CardBody>
+                </CustomCard>
             </>
+
             :
             <div className="min-h-[300px] flex items-center justify-center">
                 <Spinner size={"lg"}/>

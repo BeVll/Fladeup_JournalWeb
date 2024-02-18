@@ -97,7 +97,7 @@ export const ViewGroup = () => {
 
                     </CardBody>
                 </CustomCard>
-                <div className={"grid grid-cols-2 gap-4"} style={{gridTemplateColumns: "35% auto"}}>
+                <div className={"grid grid-flow-col md:grid-flow-row grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4"} style={{gridTemplateColumns: "35% auto"}}>
                     <CustomCard className="">
                         <CardHeader className="flex justify-between p-4">
                             <div className="font-bold flex items-center gap-2"><MdOutlineMenuBook  size={20}/> Subjects
@@ -109,7 +109,7 @@ export const ViewGroup = () => {
                         <Divider/>
                         <CardBody className="p-4">
                             {
-                                group?.subjects
+                                group?.subjects && group?.subjects.length > 0
                                     ?
                                     group?.subjects.map(subject => {
                                         return (
@@ -140,7 +140,7 @@ export const ViewGroup = () => {
                                         )
                                     })
                                     :
-                                    <span>No subjects</span>
+                                    <span className={"w-full text-center text-default-300"}>No subjects</span>
                             }
 
                         </CardBody>
@@ -154,9 +154,9 @@ export const ViewGroup = () => {
                             }}>Add</Button>
                         </CardHeader>
                         <Divider/>
-                        <CardBody className="gap-2  p-0 py-2">
+                        <CardBody className="gap-2 p-0 py-2">
                             {
-                                group?.students
+                                group?.students && group?.students.length > 0
                                     ?
                                     group?.students.map(student => {
                                         return (
@@ -203,7 +203,7 @@ export const ViewGroup = () => {
                                         )
                                     })
                                     :
-                                    <span>No subjects</span>
+                                    <span className={"w-full text-center"}>No students</span>
                             }
 
                         </CardBody>

@@ -5,11 +5,7 @@ import {CustomCard} from "../../components/CustomCard.tsx";
 
 export const Students = () => {
     return (
-        <CustomCard>
-            <CardBody>
                 <Outlet/>
-            </CardBody>
-        </CustomCard>
 
     );
 };
