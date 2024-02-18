@@ -1,4 +1,4 @@
-import {useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {
     Button,
     Card,
@@ -35,6 +35,7 @@ export const ViewStudent = () => {
     const [page, setPage] = useState(1);
     const { theme, setTheme } = useTheme();
     const [isLoading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log(id);
@@ -171,10 +172,12 @@ export const ViewStudent = () => {
                                                 {group.name}
                                             </Link>
                                             <div className="relative flex items-center gap-2">
-                                                <Tooltip content="Details">
-                                          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                            <EyeFilledIcon className={iconClasses}/>
-                                          </span>
+                                                <Tooltip closeDelay={0} content="Details">
+                                                    <Button isIconOnly size={"sm"} variant={"light"}
+                                                            onPress={() => navigate("/groups/view/"+group.id)}
+                                                            className="text-lg text-danger cursor-pointer active:opacity-50">
+                                                        <EyeFilledIcon className={iconClasses}/>
+                                                    </Button>
                                                 </Tooltip>
                                                 <Tooltip closeDelay={0} color="danger" content="Remove from group">
                                                     <Button isIconOnly size={"sm"} variant={"light"}

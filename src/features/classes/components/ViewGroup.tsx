@@ -11,12 +11,12 @@ import {
     Listbox,
     ListboxItem, Modal, ModalBody, ModalContent, ModalHeader, Spinner, Tooltip
 } from "@nextui-org/react";
-import {MdEditSquare, MdPhotoCamera} from "react-icons/md";
+import {MdEditSquare, MdOutlineMenuBook, MdPhotoCamera} from "react-icons/md";
 import {useCallback, useEffect, useState} from "react";
 import {IStudentDetail} from "../types/students.ts";
 import StudentApi from "../api/StudentApi.ts";
 import {BsCalendar2HeartFill} from "react-icons/bs";
-import {FaFemale, FaMale} from "react-icons/fa";
+import {FaBook, FaFemale, FaMale} from "react-icons/fa";
 import {InformationItem} from "./InformationItem.tsx";
 import {IoMdAddCircle} from "react-icons/io";
 import {FaPeopleGroup} from "react-icons/fa6";
@@ -29,6 +29,7 @@ import {AddToGroup} from "./AddToGroup.tsx";
 import GroupApi from "../api/GroupApi.ts";
 import {IGroupDetailed} from "../types/groups.ts";
 import {CustomCard} from "../../../components/CustomCard.tsx";
+import {PiStudentBold} from "react-icons/pi";
 
 export const ViewGroup = () => {
     const { id } = useParams()
@@ -99,7 +100,7 @@ export const ViewGroup = () => {
                 <div className={"grid grid-cols-2 gap-4"} style={{gridTemplateColumns: "35% auto"}}>
                     <CustomCard className="">
                         <CardHeader className="flex justify-between p-4">
-                            <div className="font-bold flex items-center gap-2"><FaPeopleGroup size={20}/> Groups
+                            <div className="font-bold flex items-center gap-2"><MdOutlineMenuBook  size={20}/> Subjects
                             </div>
                             <Button startContent={<IoMdAddCircle/>} onPress={() => {
                                 setOpenAddGroup(true)
@@ -114,7 +115,7 @@ export const ViewGroup = () => {
                                         return (
                                             <div key={subject.id}
                                                  className="flex flex-row items-center justify-between w-full">
-                                                <Link href={"/groups/view/" + subject.id} color={"foreground"}
+                                                <Link href={"/subject/view/" + subject.id} color={"foreground"}
                                                       underline={"hover"}>
                                                     {subject.name}
                                                 </Link>
@@ -146,7 +147,7 @@ export const ViewGroup = () => {
                     </CustomCard>
                     <CustomCard className="">
                         <CardHeader className="flex justify-between p-4">
-                            <div className="font-bold flex items-center gap-2"><FaPeopleGroup size={20}/> Students
+                            <div className="font-bold flex items-center gap-2"><PiStudentBold  size={20}/> Students
                             </div>
                             <Button startContent={<IoMdAddCircle/>} onPress={() => {
                                 setOpenAddGroup(true)

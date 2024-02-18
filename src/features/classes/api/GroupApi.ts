@@ -4,6 +4,7 @@ import {IGroupCreate, IGroupDetailed, IGroupModel, IGroupUpdate} from "../types/
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
 import {IStudentDetail} from "../../students/types/students.ts";
+import {ISubjectModel} from "../../subjects/types/subjects.ts";
 
 const GroupApi = {
     getAllGroups: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
@@ -18,6 +19,16 @@ const GroupApi = {
     },
     getDetailedGroup: async function (id:string) {
         const response = await http.get<IGroupDetailed>("/Class/"+id);
+        return response;
+    },
+    addSubject: async function (subject: ISubjectModel, groupId: number, teacherId: number|undefined, description:string|undefined) {
+        const values = {
+            "subjectId": subject.id,
+            "classId": groupId,
+            "teacherId": teacherId,
+            "description": description
+        }
+        const response = await formHttp.post("/Class/addSubject", values);
         return response;
     },
     createGroup: async function (values: IGroupCreate) {
