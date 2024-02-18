@@ -167,6 +167,7 @@ export const ViewStudent = () => {
                                     return (
                                         <div key={group.id}
                                              className="flex flex-row items-center justify-between w-full">
+
                                             <Link href={"/groups/view/" + group.id} color={"foreground"}
                                                   underline={"hover"}>
                                                 {group.name}

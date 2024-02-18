@@ -154,18 +154,34 @@ export const ViewGroup = () => {
                             }}>Add</Button>
                         </CardHeader>
                         <Divider/>
-                        <CardBody className="p-4">
+                        <CardBody className="gap-2  p-0 py-2">
                             {
-                                group?.subjects
+                                group?.students
                                     ?
-                                    group?.subjects.map(subject => {
+                                    group?.students.map(student => {
                                         return (
-                                            <div key={subject.id}
-                                                 className="flex flex-row items-center justify-between w-full">
-                                                <Link href={"/groups/view/" + subject.id} color={"foreground"}
-                                                      underline={"hover"}>
-                                                    {subject.name}
-                                                </Link>
+                                            <div key={student.id}
+                                                 className="flex flex-row items-center justify-between w-full hover:bg-content2 cursor-pointer py-2 px-4">
+                                                <div className="grid items-center gap-2 grid-cols-2"
+                                                     style={{gridTemplateColumns: "40px auto"}}>
+                                                    {
+                                                        student.image ?
+                                                            <Tooltip content={
+                                                                <Image className={"h-[150px] rounded"}
+                                                                       src={import.meta.env.VITE_STORAGE_URL + student.image}/>
+                                                            }>
+                                                                <Image className="h-[48px] w-[36px] object-cover rounded w-full"
+                                                                       src={import.meta.env.VITE_STORAGE_URL + student.image}/>
+                                                            </Tooltip>
+                                                            :
+                                                            <MdPhotoCamera className="text-default-300 h-[48px]" size={40}/>
+                                                    }
+                                                    <Link href={"/students/view/" + student.id} color={"foreground"}
+                                                          underline={"hover"}>
+                                                        {student.firstname} {student.lastname}
+                                                    </Link>
+
+                                                </div>
                                                 <div className="relative flex items-center gap-2">
                                                     <Tooltip content="Details">
                                                   <span
@@ -176,7 +192,7 @@ export const ViewGroup = () => {
                                                     <Tooltip closeDelay={0} color="danger"
                                                              content="Remove from group">
                                                         <Button isIconOnly size={"sm"} variant={"light"}
-                                                                onPress={() => removeFromGroup(subject.id)}
+                                                                onPress={() => removeFromGroup(student.id)}
                                                                 className="text-lg text-danger cursor-pointer active:opacity-50">
                                                             <DeleteDocumentIcon
                                                                 className={cn(iconClasses, "text-danger")}/>
