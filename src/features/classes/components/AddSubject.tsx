@@ -7,7 +7,7 @@ import {
     Modal,
     ModalBody,
     ModalContent,
-    ModalHeader
+    ModalHeader, Select, SelectItem
 } from "@nextui-org/react";
 import {Search} from "react-bootstrap-icons";
 import {IGroupUpdate, IStudentDetail} from "../types/students.ts";
@@ -19,9 +19,11 @@ import GroupApi from "../../classes/api/GroupApi.ts";
 import {IoIosRemove, IoMdAdd, IoMdAddCircle} from "react-icons/io";
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
 import SubjectApi from "../../subjects/api/SubjectApi.ts";
+import {IStudentModel} from "../../students/types/students.ts";
 
 export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, group: IGroupDetailed, onAdded: () => void}) => {
     const [selectedItems, setSelectedItems] = useState<ISubjectModel[]>([]);
+    const [teachers, setTeachers] = useState<IStudentModel[]>([]);
     const [filterValue, setFilterValue] = useState("");
     const [items, setItems] = useState<PagedResponse<ISubjectModel[]>>(
         {
@@ -35,6 +37,27 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
             message: "fd"
         }
     );
+
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<IStudentModel[]>([]);
+    const [showResults, setShowResults] = useState<boolean>(false);
+
+
+    const handleSearch = (query: string) => {
+        const filteredResults = teachers.filter((item) =>
+            item.firstname.toLowerCase().includes(query.toLowerCase())
+        );
+        console.log("Teachers: ", teachers);
+        console.log("filteredResults: ", filteredResults);
+        setSearchResults(filteredResults);
+        setShowResults(true);
+    };
+
+    const handleChange = (value: string) => {
+
+        setSearchTerm(value);
+        handleSearch(value);
+    };
 
     useEffect(() => {
         getItems();
@@ -59,6 +82,9 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
             console.log(res.data);
 
         });
+        GroupApi.getAllTeachers().then(res => {
+            setTeachers(res.data);
+        })
     }
 
     const addItem = (item: ISubjectModel) => {
@@ -76,6 +102,7 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
             onOpenChange(false);
             onAdded();
         });
+
     }
 
     return (
@@ -90,6 +117,35 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                 </ModalHeader>
                 <ModalBody>
                     <div className="bg-content2 rounded-xl">
+                        <Input
+                            classNames={{
+                                base: "max-w-full w-full h-10",
+                                mainWrapper: "h-full",
+                                input: "text-small",
+                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                            }}
+                            className="sm:hidden md:block"
+                            placeholder="Type to search group..."
+                            size="md"
+                            startContent={<Search size={18}/>}
+                            type="search"
+                            variant="bordered"
+                            onClear={onClear}
+                            onValueChange={handleChange}
+                            value={searchTerm}
+                        />
+                        {showResults &&
+                            <Select>
+                                {searchResults.map(search => {
+                                    return (
+                                        <SelectItem key={search.id}>
+                                            {search.lastname}
+                                        </SelectItem>
+                                    )
+                                })}
+                            </Select>
+                        }
+
                         <Input
                             classNames={{
                                 base: "max-w-full w-full h-10",

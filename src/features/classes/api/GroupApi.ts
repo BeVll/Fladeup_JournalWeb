@@ -3,7 +3,7 @@ import {formHttp, http} from "../../../http.ts";
 import {IGroupCreate, IGroupDetailed, IGroupModel, IGroupUpdate} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
-import {IStudentDetail} from "../../students/types/students.ts";
+import {IStudentDetail, IStudentModel} from "../../students/types/students.ts";
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
 
 const GroupApi = {
@@ -29,6 +29,10 @@ const GroupApi = {
             "description": description
         }
         const response = await formHttp.post("/Class/addSubject", values);
+        return response;
+    },
+    getAllTeachers: async function () {
+        const response = await http.get<IStudentModel[]>("/Teacher/all");
         return response;
     },
     createGroup: async function (values: IGroupCreate) {

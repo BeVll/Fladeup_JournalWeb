@@ -30,6 +30,7 @@ import GroupApi from "../api/GroupApi.ts";
 import {IGroupDetailed} from "../types/groups.ts";
 import {CustomCard} from "../../../components/CustomCard.tsx";
 import {PiStudentBold} from "react-icons/pi";
+import {AddSubject} from "./AddSubject.tsx";
 
 export const ViewGroup = () => {
     const { id } = useParams()
@@ -205,7 +206,8 @@ export const ViewGroup = () => {
                                     :
                                     <span className={"w-full text-center"}>No students</span>
                             }
-
+                            <AddSubject isOpen={isOpenAddGroup} onOpenChange={setOpenAddGroup} onAdded={getGroup}
+                                        group={group}/>
                         </CardBody>
                     </CustomCard>
                 </div>
