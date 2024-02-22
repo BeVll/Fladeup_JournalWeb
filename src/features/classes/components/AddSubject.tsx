@@ -1,5 +1,5 @@
 import {
-    Button, Card, CardBody,
+    Button, Card, CardBody, Chip,
     Divider, Image,
     Input,
     Listbox,
@@ -16,11 +16,12 @@ import StudentApi from "../api/StudentApi.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {IGroupDetailed, IGroupModel} from "../../classes/types/groups.ts";
 import GroupApi from "../../classes/api/GroupApi.ts";
-import {IoIosRemove, IoMdAdd, IoMdAddCircle} from "react-icons/io";
+import {IoIosRemove, IoIosSchool, IoMdAdd, IoMdAddCircle} from "react-icons/io";
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
 import SubjectApi from "../../subjects/api/SubjectApi.ts";
 import {IStudentModel} from "../../students/types/students.ts";
 import {MdPhotoCamera} from "react-icons/md";
+import {FaExchangeAlt} from "react-icons/fa";
 
 export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, group: IGroupDetailed, onAdded: () => void}) => {
     const [selectedItems, setSelectedItems] = useState<ISubjectModel[]>([]);
@@ -43,7 +44,7 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [searchResults, setSearchResults] = useState<IStudentModel[]>([]);
     const [showResults, setShowResults] = useState<boolean>(false);
-
+    const [selectedTeacher, setSelectedTeacher] = useState<IStudentModel>();
 
     const handleSearch = (query: string) => {
         const filteredResults = teachers.filter((item) =>
@@ -104,117 +105,196 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
             backdrop={"blur"}
             isOpen={isOpen}
             onOpenChange={onOpenChange}
-            placement="auto">
+            className={"overflow-visible"}
+            placement="center">
             <ModalContent>
                 <ModalHeader>
                     Add student to group
                 </ModalHeader>
                 <ModalBody>
-                    <div>
-                        <Input
-                            classNames={{
-                                base: "max-w-full w-full h-10",
-                                mainWrapper: "h-full",
-                                input: "text-small",
-                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                            }}
-                            className="sm:hidden md:block"
-                            placeholder="Choose a teacher"
-                            size="md"
-                            startContent={<Search size={18}/>}
-                            type="search"
-                            variant="bordered"
-                            onClear={onClear}
-                            onFocusChange={setFocused}
-                            onValueChange={handleChange}
-                            value={searchTerm}
-                        />
-                        <div className="relative h-[20px]">
-                            {isFocused &&
-                                <Card shadow={"lg"} className="absolute w-full z-10">
-                                    <CardBody className="p-0">
-                                        {searchResults.map(teacher =>
-                                            {
+
+                    {selectedTeacher ?
+                        <div className={"flex flex-col items-center bg-content2 p-2 gap-2 rounded-xl"}>
+                            <Chip className={""}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
+                            <div className={"flex items-center w-full justify-between"}>
+                                <div className={"flex items-center"}>
+                                    {
+                                        selectedTeacher.image ?
+                                            <Tooltip content={
+                                                <Image className={"h-[150px] rounded"}
+                                                       src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                            }>
+                                                <Image
+                                                    className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                    src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                            </Tooltip>
+                                            :
+                                            <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                           size={40}/>
+                                    }
+                                    <span className={"text-[14px]"}>
+                                {selectedTeacher.firstname} {selectedTeacher.lastname}
+                                </span>
+                                </div>
+                                    <Button isIconOnly onPress={() => {
+                                        setSelectedTeacher(undefined)
+                                    }}>
+                                        <FaExchangeAlt/>
+                                    </Button>
+                            </div>
+
+                        </div>
+                        :
+                        <div>
+                            <Input
+                                classNames={{
+                                    base: "max-w-full w-full h-10",
+                                    mainWrapper: "h-full",
+                                    input: "text-small",
+                                    inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                                }}
+                                className="sm:hidden md:block"
+                                placeholder="Choose a teacher"
+                                size="md"
+                                startContent={<Search size={18}/>}
+                                type="search"
+                                variant="bordered"
+                                onClear={onClear}
+                                onFocusChange={setFocused}
+                                onValueChange={handleChange}
+                                value={searchTerm}
+                            />
+                            <div className="relative h-[20px]">
+                                {searchTerm != "" &&
+                                    <Card shadow={"lg"} className="absolute w-full z-10">
+                                        <CardBody className="p-0">
+                                            {searchResults.map(teacher => {
                                                 return (
-                                                    <div key={teacher.id} className="hover:bg-content2 p-2 cursor-pointer flex items-center gap-1">
-                                                        {
-                                                            teacher.image ?
-                                                                <Tooltip content={
-                                                                    <Image className={"h-[150px] rounded"}
-                                                                           src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                }>
-                                                                    <Image className="h-[20px] w-[15px] object-cover rounded w-full"
-                                                                           src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                </Tooltip>
-                                                                :
-                                                                <MdPhotoCamera className="text-default-300 h-[32px]" size={40}/>
-                                                        }
-                                                        <span className={"text-[14px]"}>
-                                                            {teacher.firstname} {teacher.lastname}
-                                                        </span>
-                                                    </div>
-                                                )
-                                            }
-                                        )}
-                                    </CardBody>
-                                </Card>
-                            }
+                                                    <Button variant={"flat"} key={teacher.id} onPress={() => {
+                                                            console.log("fadsfs");
+                                                            setSelectedTeacher(teacher);
+
+                                                        }}
+                                                             className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
+                                                            {
+                                                                teacher.image ?
+                                                                    <Tooltip content={
+                                                                        <Image className={"h-[150px] rounded"}
+                                                                               src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                    }>
+                                                                        <Image
+                                                                            className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                                            src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                    </Tooltip>
+                                                                    :
+                                                                    <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                                                   size={40}/>
+                                                            }
+                                                            <span className={"text-[14px]"}>
+                                                                {teacher.firstname} {teacher.lastname}
+                                                            </span>
+                                                        </Button>
+                                                    )
+                                                }
+                                            )}
+                                        </CardBody>
+                                    </Card>
+                                }
+                            </div>
                         </div>
-                    </div>
 
+                    }
 
+                    {selectedTeacher ?
+                        <div className={"flex flex-col items-center bg-content2 p-2 gap-2 rounded-xl"}>
+                            <Chip className={""}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
+                            <div className={"flex items-center w-full justify-between"}>
+                                <div className={"flex items-center"}>
+                                    {
+                                        selectedTeacher.image ?
+                                            <Tooltip content={
+                                                <Image className={"h-[150px] rounded"}
+                                                       src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                            }>
+                                                <Image
+                                                    className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                    src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                            </Tooltip>
+                                            :
+                                            <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                           size={40}/>
+                                    }
+                                    <span className={"text-[14px]"}>
+                                {selectedTeacher.firstname} {selectedTeacher.lastname}
+                                </span>
+                                </div>
+                                <Button isIconOnly onPress={() => {
+                                    setSelectedTeacher(undefined)
+                                }}>
+                                    <FaExchangeAlt/>
+                                </Button>
+                            </div>
 
-
-                        <Input
-                            classNames={{
-                                base: "max-w-full w-full h-10",
-                                mainWrapper: "h-full",
-                                input: "text-small",
-                                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                            }}
-                            className="sm:hidden md:block"
-                            placeholder="Type to search group..."
-                            size="md"
-                            startContent={<Search size={18}/>}
-                            type="search"
-                            variant="bordered"
-                            onClear={onClear}
-                            onValueChange={onSearchChange}
-                            value={filterValue}
-                        />
-                        <Listbox variant={"flat"} className={"max-h-[300px] overflow-y-auto gap-2 "} children={items.data?.map(item => {
-                            return (
-                                <ListboxItem isDisabled={!!group.subjects.find(s => s.id === item.id) || !!selectedItems.find(s => s.id === item.id)} key={item.id} color={"default"}>
-                                    <div className="w-full flex justify-between items-center">
-                                        {item.name}
-                                        <Button onPress={() => {addItem(item)}} size={"sm"} color={"primary"} variant={"flat"} isIconOnly={true}>
-                                            <IoMdAdd />
-                                        </Button>
-                                    </div>
-                                </ListboxItem>
-                            )
-                        })}>
-                        </Listbox>
-                    {
-
-                        selectedItems.length > 0 && <div className="flex flex-col gap-2">
-                            <span className="font-medium">Selected groups:</span>
-                            {
-                                selectedItems?.map(selItem => {
-                                    return (
-                                        <div
-                                            className={"bg-content2 rounded-2xl p-2 flex justify-between items-center"}>
-                                            {selItem.name}
-                                            <Button onPress={() => {
-                                                removeItem(selItem)
-                                            }} size={"sm"} color={"danger"} variant={"flat"} isIconOnly={true}>
-                                                <IoIosRemove/>
-                                            </Button>
-                                        </div>
-                                    )
-                                })
-                            }
                         </div>
+                        :
+                        <div>
+                            <Input
+                                classNames={{
+                                    base: "max-w-full w-full h-10",
+                                    mainWrapper: "h-full",
+                                    input: "text-small",
+                                    inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                                }}
+                                className="sm:hidden md:block"
+                                placeholder="Choose a teacher"
+                                size="md"
+                                startContent={<Search size={18}/>}
+                                type="search"
+                                variant="bordered"
+                                onClear={onClear}
+                                onFocusChange={setFocused}
+                                onValueChange={handleChange}
+                                value={searchTerm}
+                            />
+                            <div className="relative h-[20px]">
+                                {searchTerm != "" &&
+                                    <Card shadow={"lg"} className="absolute w-full z-10">
+                                        <CardBody className="p-0">
+                                            {searchResults.map(teacher => {
+                                                    return (
+                                                        <Button variant={"flat"} key={teacher.id} onPress={() => {
+                                                            console.log("fadsfs");
+                                                            setSelectedTeacher(teacher);
+
+                                                        }}
+                                                                className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
+                                                            {
+                                                                teacher.image ?
+                                                                    <Tooltip content={
+                                                                        <Image className={"h-[150px] rounded"}
+                                                                               src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                    }>
+                                                                        <Image
+                                                                            className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                                            src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                    </Tooltip>
+                                                                    :
+                                                                    <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                                                   size={40}/>
+                                                            }
+                                                            <span className={"text-[14px]"}>
+                                                                {teacher.firstname} {teacher.lastname}
+                                                            </span>
+                                                        </Button>
+                                                    )
+                                                }
+                                            )}
+                                        </CardBody>
+                                    </Card>
+                                }
+                            </div>
+                        </div>
+
                     }
 
                     <Button onPress={save}>Add</Button>
