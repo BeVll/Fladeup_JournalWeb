@@ -48,7 +48,7 @@ export const ListSubjects = () => {
     const getItems= (page:number, pageSize:number, filterValue: string, column:Key | undefined , direction:string | undefined ) => {
         setLoading(true);
 
-        SubjectApi.getAllSubjects(page, pageSize, filterValue, column, direction).then(async res => {
+        SubjectApi.getSubjectsByQuery(page, pageSize, filterValue, column, direction).then(async res => {
             setItems(res.data);
             console.log(res.data);
             setLoading(false);
