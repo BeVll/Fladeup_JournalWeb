@@ -263,7 +263,7 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                         </div>
 
                     }
-
+                    <Input labelPlacement={"inside"} label={"Description"}/>
                     <Button onPress={save}>Add</Button>
                 </ModalBody>
             </ModalContent>
