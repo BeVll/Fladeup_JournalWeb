@@ -3,9 +3,10 @@ import {formHttp, http} from "../../../http.ts";
 import {ISubjectCreate, ISubjectModel} from "../types/subjects.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
+import {IStudentModel} from "../../students/types/students.ts";
 
 const SubjectApi = {
-    getAllSubjects: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
+    getSubjectsByQuery: async function (page: number, pageSize: number, filterValue: string, sortBy: Key | undefined, sortDirection: string | undefined ) {
         let url = "";
         if(filterValue != undefined && filterValue != "")
             url = "/Subject?page="+page+"&pageSize="+pageSize+"&searchQuery="+filterValue + "&sortBy="+sortBy?.toString() + "&sortDirection="+sortDirection;
@@ -15,7 +16,10 @@ const SubjectApi = {
         const response = await http.get<PagedResponse<ISubjectModel[]>>(url);
         return response;
     },
-
+    getAllSubjects: async function () {
+        const response = await http.get<ISubjectModel[]>("/Subject/all");
+        return response;
+    },
     createSubject: async function (values: ISubjectCreate) {
         const response  = await formHttp.post("/Subject/create", values);
         return response;

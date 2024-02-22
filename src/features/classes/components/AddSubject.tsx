@@ -20,40 +20,40 @@ import {IoIosRemove, IoIosSchool, IoMdAdd, IoMdAddCircle} from "react-icons/io";
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
 import SubjectApi from "../../subjects/api/SubjectApi.ts";
 import {IStudentModel} from "../../students/types/students.ts";
-import {MdPhotoCamera} from "react-icons/md";
-import {FaExchangeAlt} from "react-icons/fa";
+import {MdOutlineMenuBook, MdPhotoCamera} from "react-icons/md";
+import {FaBook, FaExchangeAlt} from "react-icons/fa";
+import {FiBook} from "react-icons/fi";
 
 export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, group: IGroupDetailed, onAdded: () => void}) => {
-    const [selectedItems, setSelectedItems] = useState<ISubjectModel[]>([]);
     const [teachers, setTeachers] = useState<IStudentModel[]>([]);
     const [filterValue, setFilterValue] = useState("");
-    const [isFocused, setFocused] = useState<boolean>();
-    const [items, setItems] = useState<PagedResponse<ISubjectModel[]>>(
-        {
-            pageNumber: 1,
-            pageSize: 0,
-            totalPages: 1,
-            totalRecords: 0,
-            data: [],
-            succeeded: false,
-            errors: null,
-            message: "fd"
-        }
-    );
-
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [searchResults, setSearchResults] = useState<IStudentModel[]>([]);
-    const [showResults, setShowResults] = useState<boolean>(false);
     const [selectedTeacher, setSelectedTeacher] = useState<IStudentModel>();
+
+    const [subjects, setSubjects] = useState<ISubjectModel[]>([]);
+    const [filterSubjects, setFilterSubjects] = useState("");
+    const [searchSubject, setSearchSubject] = useState<string>('');
+    const [searchSubjectsResults, setSearchSubjectsResults] = useState<ISubjectModel[]>([]);
+    const [selectedSubject, setSelectedSubject] = useState<ISubjectModel>();
 
     const handleSearch = (query: string) => {
         const filteredResults = teachers.filter((item) =>
             item.firstname.toLowerCase().includes(query.toLowerCase()) || item.lastname.toLowerCase().includes(query.toLowerCase())
         );
-        console.log("Teachers: ", teachers);
+        console.log("Teachers: ", subjects);
         console.log("filteredResults: ", filteredResults);
         setSearchResults(filteredResults);
-        setShowResults(true);
+    };
+
+    const handleSearchSubject = (query: string) => {
+        console.log("Subjects: ", subjects);
+        const filteredResults = subjects.filter((item) =>
+            item.name.toLowerCase().includes(query.toLowerCase()) || item.color.toLowerCase().includes(query.toLowerCase())
+        );
+        console.log("Subjects: ", subjects);
+        console.log("filteredResults: ", filteredResults);
+        setSearchSubjectsResults(filteredResults);
     };
 
     const handleChange = (value: string) => {
@@ -62,28 +62,24 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
         handleSearch(value);
     };
 
+    const handleChangeSubject = (value: string) => {
+
+        setSearchSubject(value);
+        handleSearchSubject(value);
+    };
+
     useEffect(() => {
         getItems();
 
-    }, [filterValue]);
+    }, [filterValue, filterSubjects]);
 
-    const onSearchChange = useCallback((value:string) => {
-        if (value) {
-            setFilterValue(value);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
 
-    const onClear = useCallback(()=>{
-        setFilterValue("")
-    },[])
+
 
     const getItems= () => {
-        SubjectApi.getAllSubjects(1, 15, filterValue, "id", "ascending").then(res => {
-            setItems(res.data);
+        SubjectApi.getAllSubjects().then(res => {
             console.log(res.data);
-
+            setSubjects(res.data);
         });
         GroupApi.getAllTeachers().then(res => {
             setTeachers(res.data);
@@ -93,10 +89,6 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
 
 
     const save = () => {
-        GroupApi.addSubject(selectedItems, group.id).then(() => {
-            onOpenChange(false);
-            onAdded();
-        });
 
     }
 
@@ -109,13 +101,13 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
             placement="center">
             <ModalContent>
                 <ModalHeader>
-                    Add student to group
+                    Add subject for group
                 </ModalHeader>
                 <ModalBody>
 
                     {selectedTeacher ?
-                        <div className={"flex flex-col items-center bg-content2 p-2 gap-2 rounded-xl"}>
-                            <Chip className={""}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
+                        <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
+                            <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
                             <div className={"flex items-center w-full justify-between"}>
                                 <div className={"flex items-center"}>
                                     {
@@ -159,8 +151,7 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                                 startContent={<Search size={18}/>}
                                 type="search"
                                 variant="bordered"
-                                onClear={onClear}
-                                onFocusChange={setFocused}
+
                                 onValueChange={handleChange}
                                 value={searchTerm}
                             />
@@ -205,31 +196,21 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
 
                     }
 
-                    {selectedTeacher ?
-                        <div className={"flex flex-col items-center bg-content2 p-2 gap-2 rounded-xl"}>
-                            <Chip className={""}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
+                    {selectedSubject ?
+                        <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
+                            <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}>
+                                <MdOutlineMenuBook size={20}/>Subject
+                            </div>
+                            </Chip>
                             <div className={"flex items-center w-full justify-between"}>
-                                <div className={"flex items-center"}>
-                                    {
-                                        selectedTeacher.image ?
-                                            <Tooltip content={
-                                                <Image className={"h-[150px] rounded"}
-                                                       src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
-                                            }>
-                                                <Image
-                                                    className="h-[20px] w-[15px] object-cover rounded w-full"
-                                                    src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
-                                            </Tooltip>
-                                            :
-                                            <MdPhotoCamera className="text-default-300 h-[32px]"
-                                                           size={40}/>
-                                    }
+                                <div className={"flex items-center gap-2"}>
+                                    <div className={"w-[3px] h-[32px] rounded-xl"} style={{backgroundColor: selectedSubject.color}}></div>
                                     <span className={"text-[14px]"}>
-                                {selectedTeacher.firstname} {selectedTeacher.lastname}
-                                </span>
+                                    {selectedSubject.name}
+                                    </span>
                                 </div>
                                 <Button isIconOnly onPress={() => {
-                                    setSelectedTeacher(undefined)
+                                    setSelectedSubject(undefined)
                                 }}>
                                     <FaExchangeAlt/>
                                 </Button>
@@ -246,44 +227,30 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                                     inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
                                 }}
                                 className="sm:hidden md:block"
-                                placeholder="Choose a teacher"
+                                placeholder="Choose a subject"
                                 size="md"
                                 startContent={<Search size={18}/>}
                                 type="search"
                                 variant="bordered"
-                                onClear={onClear}
-                                onFocusChange={setFocused}
-                                onValueChange={handleChange}
-                                value={searchTerm}
+
+                                onValueChange={handleChangeSubject}
+                                value={searchSubject}
                             />
                             <div className="relative h-[20px]">
-                                {searchTerm != "" &&
+                                {searchSubject != "" &&
                                     <Card shadow={"lg"} className="absolute w-full z-10">
                                         <CardBody className="p-0">
-                                            {searchResults.map(teacher => {
+                                            {searchSubjectsResults.map(subject => {
                                                     return (
-                                                        <Button variant={"flat"} key={teacher.id} onPress={() => {
+                                                        <Button variant={"flat"} key={subject.id} onPress={() => {
                                                             console.log("fadsfs");
-                                                            setSelectedTeacher(teacher);
+                                                            setSelectedSubject(subject);
 
                                                         }}
                                                                 className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
-                                                            {
-                                                                teacher.image ?
-                                                                    <Tooltip content={
-                                                                        <Image className={"h-[150px] rounded"}
-                                                                               src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                    }>
-                                                                        <Image
-                                                                            className="h-[20px] w-[15px] object-cover rounded w-full"
-                                                                            src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                    </Tooltip>
-                                                                    :
-                                                                    <MdPhotoCamera className="text-default-300 h-[32px]"
-                                                                                   size={40}/>
-                                                            }
+
                                                             <span className={"text-[14px]"}>
-                                                                {teacher.firstname} {teacher.lastname}
+                                                                {subject.name}
                                                             </span>
                                                         </Button>
                                                     )
