@@ -1,12 +1,10 @@
 import {Button, Image, Input, Select, SelectItem, Tooltip} from "@nextui-org/react";
 import {MdPhotoCamera} from "react-icons/md";
 import * as Yup from "yup";
-import {IGroupCreate} from "../../classes/types/groups.ts";
 import {useFormik} from "formik";
-import SubjectApi from "../../classes/api/GroupApi.ts";
-import {IStudentCreate} from "../types/students.ts";
-import {ChangeEvent, ChangeEventHandler, LegacyRef, RefObject, useEffect, useRef, useState} from "react";
-import StudentApi from "../api/StudentApi.ts";
+import {IStudentCreate} from "../../types/students.ts";
+import {ChangeEvent, useRef, useState} from "react";
+import StudentApi from "../../api/StudentApi.ts";
 import {useNavigate} from "react-router-dom";
 
 export const CreateStudent = () => {

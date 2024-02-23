@@ -1,40 +1,32 @@
-import {Outlet, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {
     Button,
     Card,
     CardBody,
     CardHeader,
     Chip, cn,
-    Divider, Dropdown, DropdownItem, DropdownMenu,
-    DropdownTrigger,
-    Image, Input, Link,
-    Listbox,
-    ListboxItem, Modal, ModalBody, ModalContent, ModalHeader, Spinner, Tooltip
+    Divider,
+    Image, Link, Spinner, Tooltip
 } from "@nextui-org/react";
 import {MdEditSquare, MdPhotoCamera} from "react-icons/md";
-import {useCallback, useEffect, useState} from "react";
-import {IStudentDetail} from "../types/students.ts";
-import StudentApi from "../api/StudentApi.ts";
+import {useEffect, useState} from "react";
+import {IStudentDetail} from "../../types/students.ts";
+import StudentApi from "../../api/StudentApi.ts";
 import {BsCalendar2HeartFill} from "react-icons/bs";
 import {FaFemale, FaMale} from "react-icons/fa";
 import {InformationItem} from "./InformationItem.tsx";
 import {IoMdAddCircle} from "react-icons/io";
 import {FaPeopleGroup} from "react-icons/fa6";
-import {Search, ThreeDotsVertical} from "react-bootstrap-icons";
-import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
-import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
-import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
-import {useTheme} from "next-themes";
+import {EyeFilledIcon} from "../../../../assets/icons/EyeFilledIcon.tsx";
+import {DeleteDocumentIcon} from "../../../../assets/icons/DeleteDocumentIcon.tsx";
 import {AddToGroup} from "./AddToGroup.tsx";
-import {CustomCard} from "../../../components/CustomCard.tsx";
+import {CustomCard} from "../../../../components/CustomCard.tsx";
 
-export const ViewStudent = () => {
-    const { id } = useParams()
+export const ViewStudent = ({id}:{id:string | undefined }) => {
+
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
     const [student, setStudent] = useState<IStudentDetail>();
     const [isOpenAddGroup, setOpenAddGroup] = useState<boolean>(false);
-    const [page, setPage] = useState(1);
-    const { theme, setTheme } = useTheme();
     const [isLoading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -64,8 +56,9 @@ export const ViewStudent = () => {
         }
 
     }
+
     return (
-            isLoading ? <Spinner/> :
+            isLoading && student == undefined ? <Spinner/> :
                 <CustomCard>
                     <CardBody className="p-4">
                         <div className="gap-4 flex-col flex">
@@ -73,6 +66,7 @@ export const ViewStudent = () => {
                                 <div className={"flex gap-4 "}>
                                     {student?.image ?
                                         <Image className="rounded w-full h-[140px] object-cover w-[105px]"
+                                            // @ts-expect-error
                                                src={import.meta.env.VITE_STORAGE_URL + student?.image}/>
                                         :
                                         <div
@@ -203,8 +197,11 @@ export const ViewStudent = () => {
                                     </CardBody>
                                 </Card>
                             </div>
-                            <AddToGroup isOpen={isOpenAddGroup} onOpenChange={setOpenAddGroup} onAdded={getStudent}
-                                        student={student}/>
+                            {
+                                student && <AddToGroup isOpen={isOpenAddGroup} onOpenChange={setOpenAddGroup} onAdded={getStudent}
+                                                       student={student}/>
+                            }
+
                         </div>
                     </CardBody>
                 </CustomCard>

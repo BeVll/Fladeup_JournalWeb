@@ -12,21 +12,21 @@ import {
     TableRow, Tooltip, useDisclosure
 } from "@nextui-org/react";
 import {Key, useState} from "react";
-import {CustomTable} from "../../../components/TableComponents/CustomTable.tsx";
-import {IStudentModel} from "../types/students.ts";
-import {IColumn} from "../../../lib/types/customTableTypes.ts";
+import {CustomTable} from "../../../../components/TableComponents/CustomTable.tsx";
+import {IStudentModel} from "../../types/students.ts";
+import {IColumn} from "../../../../lib/types/customTableTypes.ts";
 import {ThreeDotsVertical} from "react-bootstrap-icons";
-import {DeleteDocumentIcon} from "../../../assets/icons/DeleteDocumentIcon.tsx";
-import {EditDocumentIcon} from "../../../assets/icons/EditDocumentIcon.tsx";
-import {EyeFilledIcon} from "../../../assets/icons/EyeFilledIcon.tsx";
-import {EditGroup} from "./EditGroup.tsx";
-import StudentApi from "../api/StudentApi.ts";
-import {DeleteModal} from "../../../components/Modals/DeleteModal.tsx";
-import {PagedResponse} from "../../../lib/types/types.ts";
+import {DeleteDocumentIcon} from "../../../../assets/icons/DeleteDocumentIcon.tsx";
+import {EditDocumentIcon} from "../../../../assets/icons/EditDocumentIcon.tsx";
+import {EyeFilledIcon} from "../../../../assets/icons/EyeFilledIcon.tsx";
+import {EditGroup} from "../EditGroup.tsx";
+import StudentApi from "../../api/StudentApi.ts";
+import {DeleteModal} from "../../../../components/Modals/DeleteModal.tsx";
+import {PagedResponse} from "../../../../lib/types/types.ts";
 import {MdPhotoCamera} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
-import {IGroupModel} from "../../classes/types/groups.ts";
-import { CustomCard } from "../../../components/CustomCard.tsx";
+import {IGroupModel} from "../../../classes/types/groups.ts";
+import { CustomCard } from "../../../../components/CustomCard.tsx";
 
 export const ListStudents = () => {
     const [items, setItems] = useState<PagedResponse<IStudentModel[]>>(
@@ -41,7 +41,6 @@ export const ListStudents = () => {
             message: "fd"
         }
     )
-    const {isOpen, onOpenChange} = useDisclosure();
     const [isOpenDelete, setOpenDelete] = useState<boolean>(false);
     const [isOpenEdit, setOpenEdit] = useState<boolean>(false);
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -81,8 +80,6 @@ export const ListStudents = () => {
         }
     }
 
-
-    // @ts-ignore
     return (
         items ?
             <>
@@ -121,10 +118,13 @@ export const ListStudents = () => {
                                         {
                                             item.image ?
                                                 <Tooltip content={
+
                                                     <Image className={"h-[150px] rounded"}
+                                                        // @ts-ignore
                                                            src={import.meta.env.VITE_STORAGE_URL + item.image}/>
                                                 }>
                                                     <Image className="rounded w-full"
+                                                        // @ts-ignore
                                                            src={import.meta.env.VITE_STORAGE_URL + item.image}/>
                                                 </Tooltip>
                                                 :

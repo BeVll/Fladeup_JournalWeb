@@ -1,7 +1,7 @@
 
 import './App.css'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {AuthUserActionType, IAuthUser, IUser} from "./lib/store/types.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {LoginLayout} from "./layouts/LoginLayout.tsx";
@@ -10,26 +10,23 @@ import {Layout} from "./layouts/Layout.tsx";
 import {LoginPage} from "./pages/LoginPage.tsx";
 import bg from './assets/bg.png';
 import bg2 from './assets/bg-left.png';
-import {ThemeProvider as NextThemesProvider, useTheme} from "next-themes";
+import {useTheme} from "next-themes";
 import {formHttp, http} from "./http.ts";
-import {store} from "./lib/store/store.ts";
 import {jwtDecode} from "jwt-decode";
-import {Subjects} from "./features/subjects";
 import {SubjectsPage} from "./pages/SubjectsPage.tsx";
 import {ListSubjects} from "./features/subjects/components/ListSubjects.tsx";
-import {CreateSubject} from "./features/subjects/components/CreateSubject.tsx";
 import {GroupsPage} from "./pages/GroupsPage.tsx";
 import {ListGroups} from "./features/classes/components/ListGroups.tsx";
-import {StudentsPage} from "./pages/StudentsPage.tsx";
-import {ListStudents} from "./features/students/components/ListStudents.tsx";
-import {ViewStudent} from "./features/students/components/ViewStudent.tsx";
-import {CreateStudent} from "./features/students/components/CreateStudent.tsx";
+import {ListStudents} from "./features/students/components/listStudent";
 import {ViewGroup} from "./features/classes/components/ViewGroup.tsx";
+import {ViewStudentPage} from "./pages/students/ViewStudentPage.tsx";
+import {CreateStudentPage} from "./pages/students/CreateStudentPage.tsx";
+import {ListStudentsPage} from "./pages/students/ListStudentsPage.tsx";
 
 function App() {
     const dispatch = useDispatch();
-    const { user, isAuth } = useSelector((store: any) => store.auth as IAuthUser);
-    const { theme, setTheme } = useTheme();
+    const { isAuth } = useSelector((store: any) => store.auth as IAuthUser);
+    const { theme } = useTheme();
 
     useEffect(() => {
         if (localStorage.token) {
@@ -94,14 +91,11 @@ function App() {
                                       <Route index element={<ListGroups/>}/>
                                       <Route path="view/:id" element={<ViewGroup/>}/>
                                   </Route>
-                                  <Route path="students" element={<StudentsPage/>}>
-                                      <Route index element={<ListStudents/>}/>
-                                      <Route path="view/:id" element={<ViewStudent/>}/>
-                                      <Route path="create" element={<CreateStudent/>}/>
+                                  <Route path="students">
+                                      <Route index element={<ListStudentsPage/>}/>
+                                      <Route path="view/:id" element={<ViewStudentPage/>}/>
+                                      <Route path="create" element={<CreateStudentPage/>}/>
                                   </Route>
-                                  {/*<Route path="blogs" element={<Blogs />} />*/}
-                                  {/*<Route path="contact" element={<Contact />} />*/}
-                                  {/*<Route path="*" element={<NoPage />} />*/}
                               </Route>
                           </Routes>
                           :
@@ -111,8 +105,6 @@ function App() {
                               </Route>
                           </Routes>
                   }
-
-
               </BrowserRouter>
       </>
 

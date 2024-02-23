@@ -10,12 +10,12 @@ import {
     ModalHeader
 } from "@nextui-org/react";
 import {Search} from "react-bootstrap-icons";
-import {IGroupUpdate, IStudentDetail} from "../types/students.ts";
+import {IGroupUpdate, IStudentDetail} from "../../types/students.ts";
 import {Key, useCallback, useEffect, useState} from "react";
-import StudentApi from "../api/StudentApi.ts";
-import {PagedResponse} from "../../../lib/types/types.ts";
-import {IGroupModel} from "../../classes/types/groups.ts";
-import GroupApi from "../../classes/api/GroupApi.ts";
+import StudentApi from "../../api/StudentApi.ts";
+import {PagedResponse} from "../../../../lib/types/types.ts";
+import {IGroupModel} from "../../../classes/types/groups.ts";
+import GroupApi from "../../../classes/api/GroupApi.ts";
 import {IoIosRemove, IoMdAdd, IoMdAddCircle} from "react-icons/io";
 
 export const AddToGroup = ({ isOpen, onOpenChange, student, onAdded }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, student: IStudentDetail, onAdded: () => void}) => {
