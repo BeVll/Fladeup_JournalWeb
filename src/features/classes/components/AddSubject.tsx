@@ -14,7 +14,7 @@ import {IGroupUpdate, IStudentDetail} from "../types/students.ts";
 import {Key, useCallback, useEffect, useState} from "react";
 import StudentApi from "../api/StudentApi.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
-import {IGroupDetailed, IGroupModel} from "../../classes/types/groups.ts";
+import {IGroupAddSubject, IGroupCreate, IGroupDetailed, IGroupModel} from "../../classes/types/groups.ts";
 import GroupApi from "../../classes/api/GroupApi.ts";
 import {IoIosRemove, IoIosSchool, IoMdAdd, IoMdAddCircle} from "react-icons/io";
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
@@ -23,6 +23,8 @@ import {IStudentModel} from "../../students/types/students.ts";
 import {MdOutlineMenuBook, MdPhotoCamera} from "react-icons/md";
 import {FaBook, FaExchangeAlt} from "react-icons/fa";
 import {FiBook} from "react-icons/fi";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: boolean, onOpenChange: (isOpen: boolean) => void, group: IGroupDetailed, onAdded: () => void}) => {
     const [teachers, setTeachers] = useState<IStudentModel[]>([]);
@@ -86,11 +88,33 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
         })
     }
 
+    const SignupSchema = Yup.object().shape({
+        classId: Yup.string()
+            .required('Required'),
+        subjectId: Yup.string()
+            .required('Required'),
+        teacherId: Yup.string()
+            .required('Required'),
+    });
 
-
-    const save = () => {
-
+    const initialValues: IGroupAddSubject = {
+        classId: group.id,
+        subjectId: undefined,
+        teacherId: undefined,
+        description: ""
     }
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: SignupSchema,
+        onSubmit: values => {
+            GroupApi.addSubject(values).then(res => {
+                formik.resetForm();
+                onOpenChange(false);
+            })
+        },
+    });
+
 
     return (
         <Modal
@@ -104,167 +128,171 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                     Add subject for group
                 </ModalHeader>
                 <ModalBody>
-
-                    {selectedTeacher ?
-                        <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
-                            <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
-                            <div className={"flex items-center w-full justify-between"}>
-                                <div className={"flex items-center"}>
-                                    {
-                                        selectedTeacher.image ?
-                                            <Tooltip content={
-                                                <Image className={"h-[150px] rounded"}
-                                                       src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
-                                            }>
-                                                <Image
-                                                    className="h-[20px] w-[15px] object-cover rounded w-full"
-                                                    src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
-                                            </Tooltip>
-                                            :
-                                            <MdPhotoCamera className="text-default-300 h-[32px]"
-                                                           size={40}/>
-                                    }
-                                    <span className={"text-[14px]"}>
+                    <form onSubmit={formik.handleSubmit} className={"gap-4 flex flex-col"}>
+                        {selectedTeacher ?
+                            <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
+                                <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
+                                <div className={"flex items-center w-full justify-between"}>
+                                    <div className={"flex items-center"}>
+                                        {
+                                            selectedTeacher.image ?
+                                                <Tooltip content={
+                                                    <Image className={"h-[150px] rounded"}
+                                                           src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                                }>
+                                                    <Image
+                                                        className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                        src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
+                                                </Tooltip>
+                                                :
+                                                <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                               size={40}/>
+                                        }
+                                        <span className={"text-[14px]"}>
                                 {selectedTeacher.firstname} {selectedTeacher.lastname}
                                 </span>
-                                </div>
+                                    </div>
                                     <Button isIconOnly onPress={() => {
-                                        setSelectedTeacher(undefined)
+                                        setSelectedTeacher(undefined);
+                                        formik.setFieldValue("teacherId", undefined)
                                     }}>
                                         <FaExchangeAlt/>
                                     </Button>
+                                </div>
+
                             </div>
+                            :
+                            <div>
+                                <Input
+                                    classNames={{
+                                        base: "max-w-full w-full h-10",
+                                        mainWrapper: "h-full",
+                                        input: "text-small",
+                                        inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                                    }}
+                                    className="sm:hidden md:block"
+                                    placeholder="Choose a teacher"
+                                    size="md"
+                                    startContent={<Search size={18}/>}
+                                    type="search"
+                                    variant="bordered"
 
-                        </div>
-                        :
-                        <div>
-                            <Input
-                                classNames={{
-                                    base: "max-w-full w-full h-10",
-                                    mainWrapper: "h-full",
-                                    input: "text-small",
-                                    inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                                }}
-                                className="sm:hidden md:block"
-                                placeholder="Choose a teacher"
-                                size="md"
-                                startContent={<Search size={18}/>}
-                                type="search"
-                                variant="bordered"
-
-                                onValueChange={handleChange}
-                                value={searchTerm}
-                            />
-                            <div className="relative h-[20px]">
-                                {searchTerm != "" &&
-                                    <Card shadow={"lg"} className="absolute w-full z-10">
-                                        <CardBody className="p-0">
-                                            {searchResults.map(teacher => {
-                                                return (
-                                                    <Button variant={"flat"} key={teacher.id} onPress={() => {
-                                                            console.log("fadsfs");
-                                                            setSelectedTeacher(teacher);
-
-                                                        }}
-                                                             className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
-                                                            {
-                                                                teacher.image ?
-                                                                    <Tooltip content={
-                                                                        <Image className={"h-[150px] rounded"}
-                                                                               src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                    }>
-                                                                        <Image
-                                                                            className="h-[20px] w-[15px] object-cover rounded w-full"
-                                                                            src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
-                                                                    </Tooltip>
-                                                                    :
-                                                                    <MdPhotoCamera className="text-default-300 h-[32px]"
-                                                                                   size={40}/>
-                                                            }
-                                                            <span className={"text-[14px]"}>
+                                    onValueChange={handleChange}
+                                    value={searchTerm}
+                                />
+                                <div className="relative h-[20px]">
+                                    {searchTerm != "" &&
+                                        <Card shadow={"lg"} className="absolute w-full z-10">
+                                            <CardBody className="p-0">
+                                                {searchResults.map(teacher => {
+                                                        return (
+                                                            <Button variant={"flat"} key={teacher.id} onPress={() => {
+                                                                console.log("fadsfs");
+                                                                setSelectedTeacher(teacher);
+                                                                formik.setFieldValue("teacherId", teacher.id)
+                                                            }}
+                                                                    className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
+                                                                {
+                                                                    teacher.image ?
+                                                                        <Tooltip content={
+                                                                            <Image className={"h-[150px] rounded"}
+                                                                                   src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                        }>
+                                                                            <Image
+                                                                                className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                                                src={import.meta.env.VITE_STORAGE_URL + teacher.image}/>
+                                                                        </Tooltip>
+                                                                        :
+                                                                        <MdPhotoCamera className="text-default-300 h-[32px]"
+                                                                                       size={40}/>
+                                                                }
+                                                                <span className={"text-[14px]"}>
                                                                 {teacher.firstname} {teacher.lastname}
                                                             </span>
-                                                        </Button>
-                                                    )
-                                                }
-                                            )}
-                                        </CardBody>
-                                    </Card>
-                                }
+                                                            </Button>
+                                                        )
+                                                    }
+                                                )}
+                                            </CardBody>
+                                        </Card>
+                                    }
+                                </div>
                             </div>
-                        </div>
 
-                    }
+                        }
 
-                    {selectedSubject ?
-                        <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
-                            <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}>
-                                <MdOutlineMenuBook size={20}/>Subject
-                            </div>
-                            </Chip>
-                            <div className={"flex items-center w-full justify-between"}>
-                                <div className={"flex items-center gap-2"}>
-                                    <div className={"w-[3px] h-[32px] rounded-xl"} style={{backgroundColor: selectedSubject.color}}></div>
-                                    <span className={"text-[14px]"}>
+                        {selectedSubject ?
+                            <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
+                                <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}>
+                                    <MdOutlineMenuBook size={20}/>Subject
+                                </div>
+                                </Chip>
+                                <div className={"flex items-center w-full justify-between"}>
+                                    <div className={"flex items-center gap-2"}>
+                                        <div className={"w-[3px] h-[32px] rounded-xl"} style={{backgroundColor: selectedSubject.color}}></div>
+                                        <span className={"text-[14px]"}>
                                     {selectedSubject.name}
                                     </span>
+                                    </div>
+                                    <Button isIconOnly onPress={() => {
+                                        setSelectedSubject(undefined);
+                                        formik.setFieldValue("subjectId", undefined)
+                                    }}>
+                                        <FaExchangeAlt/>
+                                    </Button>
                                 </div>
-                                <Button isIconOnly onPress={() => {
-                                    setSelectedSubject(undefined)
-                                }}>
-                                    <FaExchangeAlt/>
-                                </Button>
+
                             </div>
+                            :
+                            <div>
+                                <Input
+                                    classNames={{
+                                        base: "max-w-full w-full h-10",
+                                        mainWrapper: "h-full",
+                                        input: "text-small",
+                                        inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                                    }}
+                                    className="sm:hidden md:block"
+                                    placeholder="Choose a subject"
+                                    size="md"
+                                    startContent={<Search size={18}/>}
+                                    type="search"
+                                    variant="bordered"
 
-                        </div>
-                        :
-                        <div>
-                            <Input
-                                classNames={{
-                                    base: "max-w-full w-full h-10",
-                                    mainWrapper: "h-full",
-                                    input: "text-small",
-                                    inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                                }}
-                                className="sm:hidden md:block"
-                                placeholder="Choose a subject"
-                                size="md"
-                                startContent={<Search size={18}/>}
-                                type="search"
-                                variant="bordered"
-
-                                onValueChange={handleChangeSubject}
-                                value={searchSubject}
-                            />
-                            <div className="relative h-[20px]">
-                                {searchSubject != "" &&
-                                    <Card shadow={"lg"} className="absolute w-full z-10">
-                                        <CardBody className="p-0">
-                                            {searchSubjectsResults.map(subject => {
-                                                    return (
-                                                        <Button variant={"flat"} key={subject.id} onPress={() => {
-                                                            console.log("fadsfs");
-                                                            setSelectedSubject(subject);
-
-                                                        }}
-                                                                className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
+                                    onValueChange={handleChangeSubject}
+                                    value={searchSubject}
+                                />
+                                <div className="relative h-[20px]">
+                                    {searchSubject != "" &&
+                                        <Card shadow={"lg"} className="absolute w-full z-40">
+                                            <CardBody className="p-0">
+                                                {searchSubjectsResults.map(subject => {
+                                                        return (
+                                                            <Button variant={"flat"} key={subject.id} onPress={() => {
+                                                                console.log("fadsfs");
+                                                                setSelectedSubject(subject);
+                                                                formik.setFieldValue("subjectId", subject.id)
+                                                            }}
+                                                                    className="rounded-none p-2 cursor-pointer flex items-center gap-1 justify-start">
 
                                                             <span className={"text-[14px]"}>
                                                                 {subject.name}
                                                             </span>
-                                                        </Button>
-                                                    )
-                                                }
-                                            )}
-                                        </CardBody>
-                                    </Card>
-                                }
+                                                            </Button>
+                                                        )
+                                                    }
+                                                )}
+                                            </CardBody>
+                                        </Card>
+                                    }
+                                </div>
                             </div>
-                        </div>
 
-                    }
-                    <Input labelPlacement={"inside"} label={"Description"}/>
-                    <Button onPress={save}>Add</Button>
+                        }
+                        <Input labelPlacement={"inside"} name={"description"} value={formik.values.description} onChange={formik.handleChange} label={"Description"}/>
+                        <Button type={"submit"}>Add</Button>
+                    </form>
+
                 </ModalBody>
             </ModalContent>
         </Modal>

@@ -1,6 +1,6 @@
 
 import {formHttp, http} from "../../../http.ts";
-import {IGroupCreate, IGroupDetailed, IGroupModel, IGroupUpdate} from "../types/groups.ts";
+import {IGroupAddSubject, IGroupCreate, IGroupDetailed, IGroupModel, IGroupUpdate} from "../types/groups.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
 import {IStudentDetail, IStudentModel} from "../../students/types/students.ts";
@@ -21,13 +21,7 @@ const GroupApi = {
         const response = await http.get<IGroupDetailed>("/Class/"+id);
         return response;
     },
-    addSubject: async function (subject: ISubjectModel, groupId: number, teacherId: number|undefined, description:string|undefined) {
-        const values = {
-            "subjectId": subject.id,
-            "classId": groupId,
-            "teacherId": teacherId,
-            "description": description
-        }
+    addSubject: async function (values: IGroupAddSubject) {
         const response = await formHttp.post("/Class/addSubject", values);
         return response;
     },

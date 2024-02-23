@@ -31,6 +31,13 @@ export interface IGroupCreate{
     yearOfEnd: number
 }
 
+export interface IGroupAddSubject{
+    classId: number,
+    subjectId: number|undefined,
+    teacherId: number|undefined,
+    description: string|undefined
+}
+
 export interface IGroupUpdate{
     id: number,
     name: string,
