@@ -22,7 +22,8 @@ import {ViewGroup} from "./features/classes/components/ViewGroup.tsx";
 import {ViewStudentPage} from "./pages/students/ViewStudentPage.tsx";
 import {CreateStudentPage} from "./pages/students/CreateStudentPage.tsx";
 import {ListStudentsPage} from "./pages/students/ListStudentsPage.tsx";
-
+import {EditStudentPage} from "./pages/students/EditStudentPage.tsx";
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
     const dispatch = useDispatch();
     const { isAuth } = useSelector((store: any) => store.auth as IAuthUser);
@@ -95,6 +96,7 @@ function App() {
                                       <Route index element={<ListStudentsPage/>}/>
                                       <Route path="view/:id" element={<ViewStudentPage/>}/>
                                       <Route path="create" element={<CreateStudentPage/>}/>
+                                      <Route path="edit/:id" element={<EditStudentPage/>}/>
                                   </Route>
                               </Route>
                           </Routes>

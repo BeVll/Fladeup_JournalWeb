@@ -8,6 +8,7 @@ import {Provider} from "react-redux";
 import {store} from "./lib/store/store.ts";
 import {NextUIProvider} from "@nextui-org/react";
 import {ThemeProvider as NextThemesProvider} from "next-themes";
+import {ToastContainer} from "react-toastify";
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <NextUIProvider>
               <NextThemesProvider attribute="class" defaultTheme="dark" >
                 <App />
+
               </NextThemesProvider>
           </NextUIProvider>
       </Provider>

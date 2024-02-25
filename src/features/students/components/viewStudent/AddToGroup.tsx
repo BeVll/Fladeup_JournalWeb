@@ -73,6 +73,7 @@ export const AddToGroup = ({ isOpen, onOpenChange, student, onAdded }: {isOpen: 
         StudentApi.addToGroups(selectedItems, student.id).then(() => {
             onOpenChange(false);
             onAdded();
+            setSelectedItems([]);
         });
     }
 

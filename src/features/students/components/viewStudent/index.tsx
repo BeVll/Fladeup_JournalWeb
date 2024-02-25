@@ -49,8 +49,7 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
 
     const removeFromGroup = (groupId: number) => {
         if(student){
-            StudentApi.removeFromGroup(groupId, student.id).then(res => {
-                setStudent(res.data);
+            StudentApi.removeFromGroup(groupId, student.id).then(() => {
                 getStudent();
             })
         }
@@ -112,7 +111,7 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
 
                                     </div>
                                 </div>
-                                <Button startContent={<MdEditSquare/>} color={"primary"}>Edit</Button>
+                                <Button startContent={<MdEditSquare/>} onPress={() => {navigate("/students/edit/"+student?.id)}} color={"primary"}>Edit</Button>
                             </div>
                             <div className="grid gap-4 lg:grid-cols-3  grid-cols-1 w-full">
                                 <Card shadow={"none"} className="border-default-100 border">

@@ -62,3 +62,26 @@ export interface IGroupUpdate{
     yearOfStart: number,
     yearOfEnd: number
 }
+
+export interface IStudentAddresses{
+    userId: number,
+    country: string|undefined,
+    city: string|undefined,
+    street:string|undefined,
+    postalCode: string|undefined,
+    mailCountry: string|undefined,
+    mailCity: string|undefined,
+    mailStreet: string|undefined,
+    mailPostalCode: string|undefined
+}
+
+export interface IStudentUpdateAddresses{
+    country: string|undefined,
+    city: string|undefined,
+    street:string|undefined,
+    postalCode: string|undefined,
+    mailCountry: string|undefined,
+    mailCity: string|undefined,
+    mailStreet: string|undefined,
+    mailPostalCode: string|undefined
+}

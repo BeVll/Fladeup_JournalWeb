@@ -171,8 +171,7 @@ export const ListStudents = () => {
                                                     shortcut="⌘⇧E"
                                                     startContent={<EditDocumentIcon className={iconClasses} />}
                                                     onPress={() => {
-                                                        setEditGroup(item);
-                                                        setOpenEdit(true);
+                                                        navigate("/students/edit/"+item.id);
                                                     }}
                                                 >
                                                     Edit

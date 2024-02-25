@@ -2,8 +2,8 @@
 import {formHttp, http} from "../../../http.ts";
 import {
     IGroupCreate,
-    IGroupUpdate, IStudentCreate, IStudentDetail,
-    IStudentModel,
+    IGroupUpdate, IStudentAddresses, IStudentCreate, IStudentDetail,
+    IStudentModel, IStudentUpdateAddresses,
 } from "../types/students.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
@@ -22,6 +22,14 @@ const StudentApi = {
     },
     getDetailedStudent: async function (id: string ) {
         const response = await http.get<IStudentDetail>("/Student/"+id);
+        return response;
+    },
+    getAddresses: async function (id: string ) {
+        const response = await http.get<IStudentAddresses>("/Student/addresses/"+id);
+        return response;
+    },
+    updateAddresses: async function (values: IStudentUpdateAddresses, id: string ) {
+        const response = await formHttp.put<IStudentAddresses>("/Student/updateAddresses/"+id, values);
         return response;
     },
     addToGroups: async function (groups: IGroupModel[], studentId: number) {
