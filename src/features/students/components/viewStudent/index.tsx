@@ -90,13 +90,13 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
                                                 {student?.status}
                                             </Chip>
                                             <Chip variant={"flat"} size="sm">
-                                                <span className="">{student?.national}</span>
+                                                <span className="">{student?.nationality.nameEn}</span>
                                             </Chip>
                                             <Chip variant={"flat"} size="sm">
                                                 <div className="flex flex-row items-center gap-1">
-                                                    {student?.sex.toLowerCase() == "male" && <FaMale/>}
-                                                    {student?.sex.toLowerCase() == "female" && <FaFemale/>}
-                                                    <span className="font-medium"> {student?.sex}</span>
+                                                    {student?.gender.nameEn.toLowerCase() == "male" && <FaMale/>}
+                                                    {student?.gender.nameEn.toLowerCase() == "female" && <FaFemale/>}
+                                                    <span className="font-medium"> {student?.gender.nameEn}</span>
                                                 </div>
                                             </Chip>
                                         </div>

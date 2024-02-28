@@ -20,8 +20,8 @@ export interface IStudentDetail{
     indetificateCode: string|undefined,
     dateOfBirth: Date,
     placeOfBirth: string,
-    sex: string,
-    national: string,
+    gender: IGenderModel,
+    nationality: INationalityModel,
     email: string,
     password: string,
     confirmPassword: string,
@@ -52,6 +52,49 @@ export interface IStudentCreate{
     facebook: string|undefined,
     twitter: string|undefined,
     bankAccount: string|undefined
+}
+
+export interface IStudentUpdateModel{
+    id: number,
+    firstname: string,
+    lastname: string,
+    newImage: File|undefined,
+    image: string|undefined,
+    indetificateCode: string|undefined,
+    dateOfBirth: Date,
+    placeOfBirth: string,
+    gender: IGenderModel,
+    nationality: INationalityModel,
+    passport: string|undefined,
+    bankAccount: string|undefined,
+    status: string,
+    genders: IGenderModel[],
+    nationalities: INationalityModel[]
+}
+
+export interface IGenderModel{
+    id: number,
+    nameEn: string,
+    nameUk: string
+}
+export interface INationalityModel{
+    id: number,
+    nameEn: string,
+    nameUk: string
+}
+export interface IStudentUpdate{
+    firstname: string,
+    lastname: string,
+    newImage: File|undefined,
+    image: string|undefined,
+    indetificateCode: string|undefined,
+    dateOfBirth: Date,
+    placeOfBirth: string,
+    genderId: number,
+    nationalityId: number,
+    passport: string|undefined,
+    bankAccount: string|undefined,
+    status: string
 }
 
 export interface IGroupUpdate{

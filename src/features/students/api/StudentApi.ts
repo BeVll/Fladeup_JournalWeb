@@ -3,7 +3,7 @@ import {formHttp, http} from "../../../http.ts";
 import {
     IGroupCreate,
     IGroupUpdate, IStudentAddresses, IStudentCreate, IStudentDetail,
-    IStudentModel, IStudentUpdateAddresses,
+    IStudentModel, IStudentUpdate, IStudentUpdateAddresses, IStudentUpdateModel,
 } from "../types/students.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {Key} from "react";
@@ -24,12 +24,20 @@ const StudentApi = {
         const response = await http.get<IStudentDetail>("/Student/"+id);
         return response;
     },
+    getDetailedStudentUpdate: async function (id: string ) {
+        const response = await http.get<IStudentUpdateModel>("/Student/editStudent/"+id);
+        return response;
+    },
     getAddresses: async function (id: string ) {
         const response = await http.get<IStudentAddresses>("/Student/addresses/"+id);
         return response;
     },
     updateAddresses: async function (values: IStudentUpdateAddresses, id: string ) {
         const response = await formHttp.put<IStudentAddresses>("/Student/updateAddresses/"+id, values);
+        return response;
+    },
+    updateStudent: async function (values: IStudentUpdate, id: string ) {
+        const response = await formHttp.put<IStudentAddresses>("/Student/update/"+id, values);
         return response;
     },
     addToGroups: async function (groups: IGroupModel[], studentId: number) {
