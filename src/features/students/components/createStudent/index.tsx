@@ -2,8 +2,8 @@ import {Button, Image, Input, Select, SelectItem, Tooltip} from "@nextui-org/rea
 import {MdPhotoCamera} from "react-icons/md";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {IStudentCreate} from "../../types/students.ts";
-import {ChangeEvent, useRef, useState} from "react";
+import {IGenderModel, INationalityModel, IStudentCreate} from "../../types/students.ts";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import StudentApi from "../../api/StudentApi.ts";
 import {useNavigate} from "react-router-dom";
 
@@ -11,7 +11,18 @@ export const CreateStudent = () => {
     const [image, setImage] = useState<string | undefined>();
     const fileInputRef=useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
+    const [nationalities, setNationalities] = useState<INationalityModel[]>([]);
+    const [genders, setGenders] = useState<IGenderModel[]>([])
 
+    useEffect(() => {
+        StudentApi.getGenders().then(res => {
+            setGenders(res.data);
+        });
+
+        StudentApi.getNationalities().then(res => {
+            setNationalities(res.data);
+        });
+    }, []);
 
     const onFileSelected = (file: File): string | ArrayBuffer | null => {
 
@@ -74,8 +85,8 @@ export const CreateStudent = () => {
         indetificateCode: "",
         dateOfBirth: new Date(),
         placeOfBirth: "",
-        sex: "",
-        national: "",
+        genderId: 1,
+        nationalityId: 1,
         email: "",
         password: "",
         confirmPassword: "",
@@ -186,15 +197,18 @@ export const CreateStudent = () => {
                         <div className={"grid grid-cols-2 gap-4"}>
                             <Select
                                 isRequired
-                                name={"national"}
-                                value={formik.values.national}
+                                name={"nationalityId"}
+                                value={formik.values.nationalityId}
                                 onChange={formik.handleChange}
-                                description={formik.errors.national}
+                                description={formik.errors.nationalityId}
                                 label="National"
                                 labelPlacement={"outside"}
                                 placeholder={"Select nationality"}>
-                                <SelectItem key={"ukrainian"}>Ukrainian</SelectItem>
-                                <SelectItem key={"polish"}>Polish</SelectItem>
+                                {
+                                    nationalities.map(nat => (
+                                        <SelectItem key={nat.id} value={nat.id}>{nat.nameEn}</SelectItem>
+                                    ))
+                                }
                             </Select>
                             <Input
                                 isRequired
@@ -221,15 +235,18 @@ export const CreateStudent = () => {
                             />
                             <Select
                                 isRequired
-                                name={"sex"}
-                                value={formik.values.sex}
+                                name={"genderId"}
+                                value={formik.values.genderId}
                                 onChange={formik.handleChange}
-                                description={formik.errors.sex}
-                                label="Sex"
+                                description={formik.errors.genderId}
+                                label="Gender"
                                 labelPlacement={"outside"}
-                                placeholder={"Select sex (male or female)"}>
-                                <SelectItem key={"male"}>Male</SelectItem>
-                                <SelectItem key={"female"}>Female</SelectItem>
+                                placeholder={"Select gender"}>
+                                {
+                                    genders.map(gender => (
+                                        <SelectItem key={gender.id} value={gender.id}>{gender.nameEn}</SelectItem>
+                                    ))
+                                }
                             </Select>
                         </div>
                     </div>

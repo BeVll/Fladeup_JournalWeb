@@ -1,6 +1,7 @@
 
 import {formHttp, http} from "../../../http.ts";
 import {
+    IGenderModel,
     IGroupCreate,
     IGroupUpdate, IStudentAddresses, IStudentCreate, IStudentDetail,
     IStudentModel, IStudentUpdate, IStudentUpdateAddresses, IStudentUpdateModel,
@@ -26,6 +27,14 @@ const StudentApi = {
     },
     getDetailedStudentUpdate: async function (id: string ) {
         const response = await http.get<IStudentUpdateModel>("/Student/editStudent/"+id);
+        return response;
+    },
+    getGenders: async function () {
+        const response = await http.get<IGenderModel[]>("/Student/genders");
+        return response;
+    },
+    getNationalities: async function () {
+        const response = await http.get<IGenderModel[]>("/Student/nationalities");
         return response;
     },
     getAddresses: async function (id: string ) {

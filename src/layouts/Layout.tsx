@@ -2,7 +2,7 @@ import {Outlet} from "react-router-dom";
 import {Sidebar} from "../components/Sidebar.tsx";
 import {Bounce, ToastContainer} from "react-toastify";
 import {useTheme} from "next-themes";
-
+import 'react-toastify/dist/ReactToastify.css';
 export const Layout = () => {
     const { theme, setTheme } = useTheme();
 

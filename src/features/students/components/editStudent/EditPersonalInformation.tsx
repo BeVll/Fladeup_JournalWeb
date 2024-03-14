@@ -1,36 +1,28 @@
 import {Button, CardBody, Image, Input, Select, SelectItem, Spinner} from "@nextui-org/react";
 import {CustomCard} from "../../../../components/CustomCard.tsx";
 import {
-    IStudentAddresses,
-    IStudentCreate,
-    IStudentDetail,
-    IStudentUpdate,
-    IStudentUpdateAddresses, IStudentUpdateModel
+    IStudentUpdate, IStudentUpdateModel
 } from "../../types/students.ts";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import StudentApi from "../../api/StudentApi.ts";
-import {ChangeEvent, Key, useEffect, useRef, useState} from "react";
-import {number} from "yup";
-import {Bounce, toast, ToastContainer} from "react-toastify";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {toast} from "react-toastify";
 import {MdPhotoCamera} from "react-icons/md";
-import {useNavigate} from "react-router-dom";
 
 export const EditPersonalInformation = ({id}:{id:number}) => {
     const [student, setStudent] = useState<IStudentUpdateModel>();
     const [isLoading, setLoading] = useState<boolean>(true);
     const [image, setImage] = useState<string | undefined>(undefined);
     const fileInputRef=useRef<HTMLInputElement>(null);
-    const navigate = useNavigate();
-
 
     const onFileSelected = (file: File): string | ArrayBuffer | null => {
 
-        var reader = new FileReader();
+        const reader = new FileReader();
 
         reader.onload = function(event:ProgressEvent<FileReader>) {
-            console.log(event.target.result);
-            setImage(event.target.result);
+            if(event.target && event.target.result)
+                setImage(event.target.result.toString());
 
         };
 
@@ -109,6 +101,8 @@ export const EditPersonalInformation = ({id}:{id:number}) => {
                 getStudent();
                 notify();
                 formik.resetForm();
+            }).catch(() => {
+                notifyError();
             })
         },
     });
@@ -134,6 +128,8 @@ export const EditPersonalInformation = ({id}:{id:number}) => {
             setStudent(res.data);
             formik.setValues(vals);
 
+        }).catch(() => {
+            notifyError();
         });
         formik.setFieldValue("genderId", student?.gender.id);
     }
@@ -146,8 +142,8 @@ export const EditPersonalInformation = ({id}:{id:number}) => {
                         <form onSubmit={formik.handleSubmit}>
                             <div className={"flex flex-col gap-4"}>
                                 {/*==========Section 1================*/}
-                                <div className={"grid md:grid-cols-2 grid-cols-1 gap-4"}
-                                     style={{gridTemplateColumns: "25% auto"}}>
+                                <div className={"grid md:grid-cols-[20%_auto] grid-cols-1 gap-4"}>
+
                                     <div className={"flex flex-col"}>
                                         <h1 className="font-bold text-sm">Personal Information</h1>
                                         <span className="text-content4 text-sm">Enter personal information of student like firstname, lastname, email, place of birth, date of birth and others..</span>
@@ -282,7 +278,6 @@ export const EditPersonalInformation = ({id}:{id:number}) => {
                                 {/*==========Section 2================*/}
 
                                 <div className="flex justify-end gap-4">
-                                    <Button color={"default"}>Cancel</Button>
                                     <Button type={"submit"} color={"primary"}>Save</Button>
                                 </div>
                             </div>
@@ -292,5 +287,5 @@ export const EditPersonalInformation = ({id}:{id:number}) => {
 
             </CardBody>
         </CustomCard>
-);
+    );
 };

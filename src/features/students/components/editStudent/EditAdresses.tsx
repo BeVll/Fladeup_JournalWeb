@@ -1,4 +1,4 @@
-import {Button, CardBody, Image, Input, Select, SelectItem, Spinner} from "@nextui-org/react";
+import {Button, CardBody, Chip, Image, Input, Select, SelectItem, Spinner} from "@nextui-org/react";
 import {CustomCard} from "../../../../components/CustomCard.tsx";
 import {IStudentAddresses, IStudentCreate, IStudentDetail, IStudentUpdateAddresses} from "../../types/students.ts";
 import * as Yup from "yup";
@@ -12,7 +12,8 @@ import {MdPhotoCamera} from "react-icons/md";
 export const EditAdresses = ({id}:{id:number}) => {
     const [addresses, setAddresses] = useState<IStudentAddresses>();
     const [isLoading, setLoading] = useState<boolean>(true);
-    const notify = () => toast.success('Saved   !');
+    const notify = () => toast.success('Saved!');
+    const notifyError = () => toast.error('Error!');
 
     useEffect(() => {
         getAddresses();
@@ -45,7 +46,9 @@ export const EditAdresses = ({id}:{id:number}) => {
                 getAddresses();
                 notify();
                 formik.resetForm();
-            })
+            }).catch(() => {
+                notifyError();
+            });
         },
     });
     const getAddresses = () => {
@@ -54,6 +57,8 @@ export const EditAdresses = ({id}:{id:number}) => {
             setAddresses(res.data);
             formik.setValues(res.data);
             setLoading(false);
+        }).catch(() => {
+            notifyError();
         });
 
     }
@@ -66,15 +71,17 @@ export const EditAdresses = ({id}:{id:number}) => {
                         <form onSubmit={formik.handleSubmit}>
                             <div className={"flex flex-col gap-4"}>
                                 {/*==========Section 1================*/}
-                                <div className={"grid md:grid-cols-3 grid-cols-1 gap-4"}
-                                     style={{gridTemplateColumns: "25% auto"}}>
+                                <div className={"grid md:grid-cols-[20%_auto] grid-cols-1 gap-4"}>
+
                                     <div className={"flex flex-col"}>
                                         <h1 className="font-bold text-sm">Addresses Information</h1>
                                         <span className="text-content4 text-sm">Address of permanent residence and address for receiving mail</span>
                                     </div>
                                     <div className={"grid-cols-2 grid gap-8"}>
                                         <div className={"flex flex-col gap-4 "}>
-                                            <h1 className={"font-bold text-[20px]"}>Address</h1>
+                                            <Chip variant={"flat"} color={"primary"} className={"p-4"}>
+                                                <h1 className={"font-bold text-[20px]"}>Address</h1>
+                                            </Chip>
                                             <Input name={"country"} value={formik.values.country}
                                                    onChange={formik.handleChange}
                                                    label={"Country"} labelPlacement={"outside"}
@@ -93,7 +100,9 @@ export const EditAdresses = ({id}:{id:number}) => {
                                                    placeholder={"Enter student country"}/>
                                         </div>
                                         <div className={"flex flex-col gap-4 ju"}>
-                                            <h1 className={"font-bold text-[20px]"}>Mail address</h1>
+                                            <Chip variant={"flat"} color={"primary"} className={"p-4"}>
+                                                <h1 className={"font-bold text-[20px]"}>Mail address</h1>
+                                            </Chip>
                                             <Input name={"mailCountry"} value={formik.values.mailCountry}
                                                    onChange={formik.handleChange} label={"Country"}
                                                    labelPlacement={"outside"}
@@ -116,7 +125,6 @@ export const EditAdresses = ({id}:{id:number}) => {
                                 {/*==========Section 2================*/}
 
                                 <div className="flex justify-end gap-4">
-                                    <Button color={"default"}>Cancel</Button>
                                     <Button type={"submit"} color={"primary"}>Save</Button>
                                 </div>
                             </div>

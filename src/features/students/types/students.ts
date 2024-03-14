@@ -1,6 +1,15 @@
 import {ISubjectModel} from "../../subjects/types/subjects.ts";
 import {IGroupModel} from "../../classes/types/groups.ts";
 
+export interface IGenderModel{
+    id: number,
+    nameEn: string
+}
+
+export interface INationalityModel{
+    id: number,
+    nameEn: string
+}
 
 export interface IStudentModel{
     id: number,
@@ -41,8 +50,8 @@ export interface IStudentCreate{
     indetificateCode: string|undefined,
     dateOfBirth: Date,
     placeOfBirth: string,
-    sex: string,
-    national: string,
+    genderId: number,
+    nationalityId: number,
     email: string,
     password: string,
     confirmPassword: string,
