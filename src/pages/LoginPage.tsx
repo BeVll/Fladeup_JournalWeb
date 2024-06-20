@@ -49,13 +49,13 @@ export const LoginPage = () => {
                     } as IUser
                 });
 
-                navigate("/");
+                navigate("/students");
             });
         },
     });
 
     return (
-        <div className="min-w-unit-72">
+        <div className="min-w-unit-72 w-full p-5 ">
 
             <form className="flex-col flex items-center gap-4" onSubmit={formik.handleSubmit}>
                 <div className="flex justify-between w-full items-center">

@@ -1,4 +1,5 @@
 import {AuthUserActionType, IAuthUser, IUser} from "./types.ts";
+import {boolean} from "yup";
 
 const userToken = localStorage.getItem('userToken')
     ? localStorage.getItem('userToken')

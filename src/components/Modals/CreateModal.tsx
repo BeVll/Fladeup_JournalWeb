@@ -15,7 +15,7 @@ import {formHttp, http} from "../../../http.ts";
 import {jwtDecode} from "jwt-decode";
 import {AuthUserActionType, IUser} from "../../../lib/store/types.ts";
 import {useDispatch} from "react-redux";
-import SubjectApi from "../api/StudentApi.ts";
+import SubjectApi from "../api/TeacherApi.ts";
 import {Circle} from "@uiw/react-color";
 import {useState} from "react";
 import {ISubjectCreate} from "../types/students.ts";

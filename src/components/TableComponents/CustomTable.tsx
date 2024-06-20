@@ -88,6 +88,8 @@ export const CustomTable = ({ tableBody, columns, searchLabel, totalLabel, getIt
 
             classNames={{
                 wrapper: "md:max-h-[1000px] bg-transparent p-0 border-0 shadow-none ",
+                table: "p-0",
+                tbody: "p-0"
             }}
 
             selectedKeys={selectedKeys}

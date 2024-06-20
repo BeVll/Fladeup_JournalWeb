@@ -4,7 +4,7 @@ import {Container} from "../features/students/components/Container.tsx";
 
 export const LoginLayout = () => {
     return (
-        <div className="px-[20%] items-center  flex justify-center h-screen">
+        <div className="md:px-[40%] px-[15px] w-full items-center  flex justify-center h-screen">
             <Container>
                 <Outlet/>
             </Container>

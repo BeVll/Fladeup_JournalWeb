@@ -23,8 +23,17 @@ export enum AuthUserActionType {
     LOGOUT_USER = "AUTH_LOGOUT_USER"
 }
 
+export enum SidebarActionType {
+    SET_VISIBLE = "SET_VISIBLE"
+}
+
+
 export interface IAuthUser {
     isAuth: boolean,
     user?: IUser,
     userToken?: string | null
+}
+
+export interface ISidebar {
+    isVisible: boolean
 }

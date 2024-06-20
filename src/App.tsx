@@ -24,6 +24,10 @@ import {CreateStudentPage} from "./pages/students/CreateStudentPage.tsx";
 import {ListStudentsPage} from "./pages/students/ListStudentsPage.tsx";
 import {EditStudentPage} from "./pages/students/EditStudentPage.tsx";
 import 'react-toastify/dist/ReactToastify.css';
+import {ListTeachersPage} from "./pages/teachers/ListTeachersPage.tsx";
+import {ViewTeacherPage} from "./pages/teachers/ViewTeacherPage.tsx";
+import {CreateTeacherPage} from "./pages/teachers/CreateTeacherPage.tsx";
+import {EditTeacherPage} from "./pages/teachers/EditTeacherPage.tsx";
 function App() {
     const dispatch = useDispatch();
     const { isAuth } = useSelector((store: any) => store.auth as IAuthUser);
@@ -97,6 +101,12 @@ function App() {
                                       <Route path="view/:id" element={<ViewStudentPage/>}/>
                                       <Route path="create" element={<CreateStudentPage/>}/>
                                       <Route path="edit/:id" element={<EditStudentPage/>}/>
+                                  </Route>
+                                  <Route path="teachers">
+                                      <Route index element={<ListTeachersPage/>}/>
+                                      <Route path="view/:id" element={<ViewTeacherPage/>}/>
+                                      <Route path="create" element={<CreateTeacherPage/>}/>
+                                      <Route path="edit/:id" element={<EditTeacherPage/>}/>
                                   </Route>
                               </Route>
                           </Routes>

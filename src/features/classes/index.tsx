@@ -5,7 +5,9 @@ import {CustomCard} from "../../components/CustomCard.tsx";
 
 export const Groups = () => {
     return (
-        <Outlet/>
+       <div className={"z-0"}>
+           <Outlet/>
+       </div>
 
     );
 };

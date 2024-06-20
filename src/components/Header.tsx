@@ -11,17 +11,21 @@ import {
 } from "@nextui-org/react";
 import {BoxArrowLeft, Search} from "react-bootstrap-icons";
 import {useDispatch, useSelector} from "react-redux";
-import {AuthUserActionType, IAuthUser} from "../lib/store/types.ts";
+import {AuthUserActionType, IAuthUser, ISidebar, IUser, SidebarActionType} from "../lib/store/types.ts";
 import {formHttp, http} from "../http.ts";
 import {useNavigate} from "react-router-dom";
 import {ThemeSwitch} from "./ThemeSwitch.tsx";
+import {FaUserCircle} from "react-icons/fa";
+import {LuMenu} from "react-icons/lu";
+import SidebarMobile from "./SidebarMobile.tsx";
+import {useState} from "react";
 
 export const Header = ({pageTitle}:{pageTitle:string}) => {
     const { user, isAuth } = useSelector((store: any) => store.auth as IAuthUser);
-
+    const [sidebarVisible, setSidebarVisible] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    const { isVisible } = useSelector((store: any) => store.sidebar as ISidebar);
     const logout = () => {
         delete http.defaults.headers.common["Authorization"];
         delete formHttp.defaults.headers.common["Authorization"];
@@ -53,34 +57,51 @@ export const Header = ({pageTitle}:{pageTitle:string}) => {
                             type="search"
                         />
                     </div>
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Avatar className="w-unit-2xl h-unit-2xl"
-                                    src={import.meta.env.VITE_STORAGE_URL + user?.image}/>
-                        </DropdownTrigger>
-                        <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
-                            {/*<DropdownItem*/}
-                            {/*    key="new"*/}
-                            {/*    shortcut="⌘N"*/}
-                            {/*    startContent={<AddNoteIcon className={iconClasses} />}*/}
-                            {/*>*/}
-                            {/*    New file*/}
-                            {/*</DropdownItem>*/}
+                    <Button className={"md:hidden"} isIconOnly variant={"flat"} onPress={() => {
+                        dispatch({
+                            type: SidebarActionType.SET_VISIBLE, payload: true
+                        });
+                    }}>
+                        <LuMenu size={25}/>
+                    </Button>
 
-                            <DropdownItem
-                                key="delete"
-                                className="text-danger"
-                                color="danger"
-                                onPress={logout}
-                                shortcut="⌘⇧D"
-                                startContent={<BoxArrowLeft className={"text-danger"}
-                                                            onClick={() => {
-                                                            }}/>}
-                            >
-                                Logout
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+                    <div className={"md:block hidden"}>
+                        <Dropdown >
+                            <DropdownTrigger>
+                                <Button isIconOnly={true} variant={"flat"}>
+                                    {
+                                        user?.image ?  <Avatar className="w-unit-2xl h-unit-2xl"
+                                                               src={import.meta.env.VITE_STORAGE_URL + user?.image}/>
+                                            :
+                                            <FaUserCircle size={36} color={"default"}/>
+                                    }
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
+                                {/*<DropdownItem*/}
+                                {/*    key="new"*/}
+                                {/*    shortcut="⌘N"*/}
+                                {/*    startContent={<AddNoteIcon className={iconClasses} />}*/}
+                                {/*>*/}
+                                {/*    New file*/}
+                                {/*</DropdownItem>*/}
+
+                                <DropdownItem
+                                    key="delete"
+                                    className="text-danger"
+                                    color="danger"
+                                    onPress={logout}
+                                    shortcut="⌘⇧D"
+                                    startContent={<BoxArrowLeft className={"text-danger"}
+                                                                onClick={() => {
+                                                                }}/>}
+                                >
+                                    Logout
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+
                 </div>
             </div>
 

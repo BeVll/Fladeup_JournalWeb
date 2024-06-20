@@ -12,7 +12,7 @@ import {
 import {Search} from "react-bootstrap-icons";
 import {IGroupUpdate, IStudentDetail} from "../types/students.ts";
 import {Key, useCallback, useEffect, useState} from "react";
-import StudentApi from "../api/StudentApi.ts";
+import StudentApi from "../api/TeacherApi.ts";
 import {PagedResponse} from "../../../lib/types/types.ts";
 import {IGroupAddSubject, IGroupCreate, IGroupDetailed, IGroupModel} from "../../classes/types/groups.ts";
 import GroupApi from "../../classes/api/GroupApi.ts";
@@ -132,8 +132,8 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                         {selectedTeacher ?
                             <div className={"flex flex-col bg-content2 p-2 gap-2 rounded-xl"}>
                                 <Chip variant={"shadow"}><div className={"flex gap-1 items-center font-medium"}><IoIosSchool size={20}/> Teacher</div></Chip>
-                                <div className={"flex items-center w-full justify-between"}>
-                                    <div className={"flex items-center"}>
+                                <div className={"flex items-center  w-full justify-between"}>
+                                    <div className={"flex items-center gap-[10px]"}>
                                         {
                                             selectedTeacher.image ?
                                                 <Tooltip content={
@@ -141,7 +141,7 @@ export const AddSubject = ({ isOpen, onOpenChange, group, onAdded }: {isOpen: bo
                                                            src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
                                                 }>
                                                     <Image
-                                                        className="h-[20px] w-[15px] object-cover rounded w-full"
+                                                        className="h-[40px] w-[30px] object-cover rounded"
                                                         src={import.meta.env.VITE_STORAGE_URL + selectedTeacher.image}/>
                                                 </Tooltip>
                                                 :

@@ -21,6 +21,7 @@ import {EyeFilledIcon} from "../../../../assets/icons/EyeFilledIcon.tsx";
 import {DeleteDocumentIcon} from "../../../../assets/icons/DeleteDocumentIcon.tsx";
 import {AddToGroup} from "./AddToGroup.tsx";
 import {CustomCard} from "../../../../components/CustomCard.tsx";
+import {IStudentAddresses} from "../../../teachers/types/students.ts";
 
 export const ViewStudent = ({id}:{id:string | undefined }) => {
 
@@ -29,7 +30,7 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
     const [isOpenAddGroup, setOpenAddGroup] = useState<boolean>(false);
     const [isLoading, setLoading] = useState(true);
     const navigate = useNavigate();
-
+    const [addresses, setAddresses] = useState<IStudentAddresses>();
     useEffect(() => {
         console.log(id);
         getStudent();
@@ -42,6 +43,10 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
             setLoading(true);
             StudentApi.getDetailedStudent(id).then(res => {
                 setStudent(res.data);
+                setLoading(false);
+            })
+            StudentApi.getAddresses(id).then(res => {
+                setAddresses(res.data);
                 setLoading(false);
             })
         }
@@ -133,10 +138,10 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
                                     </CardHeader>
                                     <Divider/>
                                     <CardBody>
-                                        <InformationItem title={"Country"} text={"Ukraine"}/>
-                                        <InformationItem title={"City"} text={"Tsuman"}/>
-                                        <InformationItem title={"Street"} text={"Bohdana Kmelnystkiego, 25"}/>
-                                        <InformationItem title={"Postal code"} text={"45656"}/>
+                                        <InformationItem title={"Country"} text={addresses?.country}/>
+                                        <InformationItem title={"City"} text={addresses?.city}/>
+                                        <InformationItem title={"Street"} text={addresses?.street}/>
+                                        <InformationItem title={"Postal code"} text={addresses?.postalCode}/>
                                     </CardBody>
                                 </Card>
                                 <Card shadow={"none"} className="border-default-100 border">
@@ -145,10 +150,10 @@ export const ViewStudent = ({id}:{id:string | undefined }) => {
                                     </CardHeader>
                                     <Divider/>
                                     <CardBody>
-                                        <InformationItem title={"Country"} text={"Poland"}/>
-                                        <InformationItem title={"City"} text={"Lublin"}/>
-                                        <InformationItem title={"Street"} text={"Sokola, 13/47"}/>
-                                        <InformationItem title={"Postal code"} text={"45656"}/>
+                                        <InformationItem title={"Country"} text={addresses?.mailCountry}/>
+                                        <InformationItem title={"City"} text={addresses?.mailCity}/>
+                                        <InformationItem title={"Street"} text={addresses?.mailStreet}/>
+                                        <InformationItem title={"Postal code"} text={addresses?.mailPostalCode}/>
                                     </CardBody>
                                 </Card>
                                 <Card shadow={"none"} className="border-default-100 border col-start-1">

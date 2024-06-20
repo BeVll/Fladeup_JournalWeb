@@ -14,7 +14,7 @@ import {
 import {MdEditSquare, MdOutlineMenuBook, MdPhotoCamera} from "react-icons/md";
 import {useCallback, useEffect, useState} from "react";
 import {IStudentDetail} from "../types/students.ts";
-import StudentApi from "../api/StudentApi.ts";
+import StudentApi from "../api/TeacherApi.ts";
 import {BsCalendar2HeartFill} from "react-icons/bs";
 import {FaBook, FaFemale, FaMale} from "react-icons/fa";
 import {InformationItem} from "./InformationItem.tsx";
@@ -98,7 +98,7 @@ export const ViewGroup = () => {
 
                     </CardBody>
                 </CustomCard>
-                <div className={"grid grid-flow-col md:grid-flow-row grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4"} style={{gridTemplateColumns: "35% auto"}}>
+                <div className={"grid grid-flow-col md:grid-flow-row grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4"} >
                     <CustomCard className="">
                         <CardHeader className="flex justify-between p-4">
                             <div className="font-bold flex items-center gap-2"><MdOutlineMenuBook  size={20}/> Subjects
@@ -121,12 +121,6 @@ export const ViewGroup = () => {
                                                     {subject.name}
                                                 </Link>
                                                 <div className="relative flex items-center gap-2">
-                                                    <Tooltip content="Details">
-                                                  <span
-                                                      className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                    <EyeFilledIcon className={iconClasses}/>
-                                                  </span>
-                                                    </Tooltip>
                                                     <Tooltip closeDelay={0} color="danger"
                                                              content="Remove from group">
                                                         <Button isIconOnly size={"sm"} variant={"light"}
@@ -150,9 +144,6 @@ export const ViewGroup = () => {
                         <CardHeader className="flex justify-between p-4">
                             <div className="font-bold flex items-center gap-2"><PiStudentBold  size={20}/> Students
                             </div>
-                            <Button startContent={<IoMdAddCircle/>} onPress={() => {
-                                setOpenAddGroup(true)
-                            }}>Add</Button>
                         </CardHeader>
                         <Divider/>
                         <CardBody className="gap-2 p-0 py-2">
